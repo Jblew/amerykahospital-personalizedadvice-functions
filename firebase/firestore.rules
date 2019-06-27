@@ -1,22 +1,28 @@
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function adviceIsPendingAndUserIsLoggedIn() {
-      return request.auth.uid != null && !resource.data.uid;
+    function userIsMedicalProfessional() {
+      return request.auth != null && exists(/databases/$(database)/documents/ahpaa_medicalprofessional_uids/$(request.auth.uid));
     }
 
-    function userIsMedicalProfessional() {
-      return request.auth.uid != null && request.auth.token.medicalprofessional;
+    function adviceIsPendingAndUserIsLoggedIn() {
+      return request.auth != null && !('uid' in resource.data.keys());
     }
 
     function adviceBelongsToUser() {
-      return request.auth.uid != null && resource.data.uid == request.auth.uid;
+      return request.auth != null && resource.data.uid == request.auth.uid;
     }
 
-    match /ahpaa_advices {
+    match /ahpaa_advices/{adviceId} {
       allow read: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn() || adviceBelongsToUser();
       allow create: if userIsMedicalProfessional();
       allow update: if userIsMedicalProfessional() || adviceBelongsToUser();
+    }
+
+    match /ahpaa_medicalprofessional_uids/* {
+      allow read;
+      allow write: if false;
     }
   }
 }
