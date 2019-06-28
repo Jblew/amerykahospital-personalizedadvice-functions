@@ -21,7 +21,7 @@ service cloud.firestore {
       allow update: if userIsMedicalProfessional() || adviceBelongsToUser();
     }
 
-    match /ahpaa_medicalprofessional_uids/* {
+    match /ahpaa_medicalprofessional_uids/{mpUid} {
       allow read;
       allow write: if false;
     }
