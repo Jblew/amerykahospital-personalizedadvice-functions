@@ -3,3 +3,4 @@
 /node_modules
 /serviceAccount.credentials.json
 /dist-public
+/.firebase
