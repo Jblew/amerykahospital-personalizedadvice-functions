@@ -15,7 +15,8 @@ service cloud.firestore {
     }
 
     match /ahpaa_advices/{adviceId} {
-      allow read: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn() || adviceBelongsToUser();
+      allow get: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn() || adviceBelongsToUser();
+      allow list: if userIsMedicalProfessional() || adviceBelongsToUser();
       allow create: if userIsMedicalProfessional();
       allow update: if userIsMedicalProfessional() || adviceBelongsToUser();
     }
