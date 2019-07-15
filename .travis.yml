@@ -9,6 +9,7 @@ before_install:
     - npm i -g npm
 
 install:
+    - npm i -g electron electron-builder
     - npm ci
 
 script:
