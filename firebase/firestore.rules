@@ -25,5 +25,11 @@ service cloud.firestore {
       allow read;
       allow write: if false;
     }
+
+    // demo
+    match /ahpaa_advices_demo/{adviceId} {
+      allow read;
+      allow write: if false;
+    }
   }
 }
