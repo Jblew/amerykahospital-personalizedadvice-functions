@@ -9,7 +9,7 @@ before_install:
     - npm i -g npm
 
 install:
-    - npm ci
+    - npm i
 
 script:
     - NODE_ENV=production npm run build
