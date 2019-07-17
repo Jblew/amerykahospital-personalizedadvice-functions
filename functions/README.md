@@ -12,3 +12,9 @@ This function sends a link to an advice via sms.
 #### Rate limiting
 
 Function lookups recently sent advices and limits the rate of advices that are sent over time.
+
+
+***
+
+Made with ❤️ by [Jędrzej Lewandowski](https://jedrzej.lewandowski.doctor/).
+
