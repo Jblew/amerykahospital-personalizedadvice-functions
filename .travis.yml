@@ -14,7 +14,7 @@ install:
     - firebase setup:emulators:firestore
 
 script:
-    - EMULATOR_OPTS="--token=\"$FIREBASE_EMULATOR_TOKEN\"" npm run --prefix=./firestore/rules-test test
+    - npm run --prefix=./firestore/rules-test test
 
 deploy:
     provider: firebase
