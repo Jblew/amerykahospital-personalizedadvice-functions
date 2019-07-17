@@ -129,9 +129,41 @@ describe("Firebase rules", () => {
         });
 
         describe("create", () => {
-            it.skip("Is not allowed when user is not authenticated");
-            it.skip("Is not allowed when user is not medical professional but is authenticated");
-            it.skip("Is allowed when user is a medical professional");
+            it("Is not allowed when user is not authenticated", async () => {
+                const { clientFirestore } = mock({ clientAuth: undefined });
+
+                await expect(
+                    clientFirestore
+                        .collection(collName)
+                        .doc("doc")
+                        .set({ da: "ta" }),
+                ).to.eventually.be.rejectedWith("false");
+            });
+
+            it("Is not allowed when user is not medical professional but is authenticated", async () => {
+                const uid = `user${uuid()}`;
+                const { clientFirestore } = mock({ clientAuth: { uid } });
+
+                await expect(
+                    clientFirestore
+                        .collection(collName)
+                        .doc("doc")
+                        .set({ da: "ta" }),
+                ).to.eventually.be.rejectedWith("false");
+            });
+
+            it("Is allowed when user is a medical professional", async () => {
+                const uid = `user${uuid()}`;
+                const { clientFirestore, markAsMedicalProfessional } = mock({ clientAuth: { uid } });
+                await markAsMedicalProfessional(uid);
+
+                await expect(
+                    clientFirestore
+                        .collection(collName)
+                        .doc("doc")
+                        .set({ da: "ta" }),
+                ).to.eventually.be.fulfilled;
+            });
         });
 
         describe("update", () => {
