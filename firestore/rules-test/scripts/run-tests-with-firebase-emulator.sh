@@ -6,7 +6,7 @@ cd "${DIR}"
 
 echo "Begin tests in ${DIR}"
 
-    firebase serve --only firestore & 
+    firebase emulators:start --only firestore & 
     FBPID=$! && 
     sleep 4 && npm run do_test ; TEST_EXIT_CODE=$? ; 
     echo "Killing firebase emulator server: $FBPID" && kill -STOP $FBPID 
