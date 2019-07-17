@@ -1,10 +1,9 @@
 /* tslint:disable:max-classes-per-file */
-import { expect, use as chaiUse } from "chai";
+import { FirestoreCollections } from "amerykahospital-personalizedadvice-core";
+import { use as chaiUse } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as _ from "lodash";
 import "mocha";
-import { SinonSpy, spy } from "sinon";
-import { FirestoreCollections } from "amerykahospital-personalizedadvice-core";
 
 chaiUse(chaiAsPromised);
 
