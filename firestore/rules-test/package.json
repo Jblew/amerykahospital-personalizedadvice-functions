@@ -1,0 +1,37 @@
+{
+    "name": "firestore-rules-test",
+    "scripts": {
+        "check": "if echo \"$(node --version)\" | grep -q \"$(cat ../.nvmrc)\"; then echo \"Node version correct\"; else echo \"Node version does not match that in .nvmrc\" && exit 1; fi",
+        "build:lint": "tslint -c tslint.json -p tsconfig.lint.json",
+        "build": "npm run check && npm run build:lint",
+        "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register"
+    },
+    "engines": {
+        "node": "8"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@firebase/testing": "^0.11.5",
+        "@types/bluebird": "^3.5.27",
+        "@types/chai": "4.1.7",
+        "@types/chai-as-promised": "7.1.0",
+        "@types/lodash": "^4.14.136",
+        "@types/mocha": "5.2.7",
+        "@types/node": "^12.6.3",
+        "@types/sinon": "7.0.13",
+        "@types/uuid": "^3.4.5",
+        "bluebird": "^3.5.5",
+        "chai": "4.2.0",
+        "chai-as-promised": "7.1.1",
+        "husky": "^3.0.0",
+        "lodash": "4.17.14",
+        "mocha": "6.1.4",
+        "sinon": "7.3.2",
+        "ts-node": "8.3.0",
+        "tslint": "5.18.0",
+        "typescript": "3.5.3",
+        "uuid": "^3.3.2",
+        "wise-tslint-configuration": "0.2.0"
+    },
+    "private": true
+}

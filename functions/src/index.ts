@@ -11,7 +11,30 @@ import { AddAdviceFunction } from "./logic/AddAdviceFunction";
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 
-exports.addAdvice = functions.region("europe-west2").https.onCall(async (data, context) => {
+const perUserlimiter = new FirebaseFunctionsRateLimiter(
+    {
+        firebaseCollectionKey: "per_user_limiter",
+        maxCallsPerPeriod: 2,
+        periodSeconds: 15,
+    },
+    db,
+);
+exports.authenticatedFunction = functions.region("europe-west2").https.onCall(async (data, context) => {
+    if (!context.auth || !context.auth.uid) {
+        throw new functions.https.HttpsError(
+            "permission-denied",
+            "Please authenticate",
+        );
+    }
+    const uidQualifier = "u_" + context.auth.uid;
+    const isQuotaExceeded = await perUserlimiter.isQuotaExceededOrRecordCall(uidQualifier);
+    if (isQuotaExceeded) {
+        throw new functions.https.HttpsError(
+            "resource-exhausted",
+            "Call quota exceeded for this user. Try again later",
+        );
+    }
+
     const isMedicalProfessional =
         context.auth &&
         context.auth.uid &&
@@ -32,12 +55,17 @@ exports.addAdvice = functions.region("europe-west2").https.onCall(async (data, c
     }
 });
 
+
+const limiter = new FirebaseFunctionsRateLimiter(
+    {
+        firebaseCollectionKey: "rate_limiter_collection",
+        maxCallsPerPeriod: 2,
+        periodSeconds: 15,
+    },
+    db,
+);
 exports.testRateLimiter = functions.https.onRequest(async (req, res) => {
     console.log("Limiter.isQuotaExceededOrRecordCall");
-    const limiter = new FirebaseFunctionsRateLimiter(
-        { firebaseCollectionKey: "rate_limiter_collection", maxCallsPerPeriod: 2, periodSeconds: 15, debug: true },
-        db,
-    );
     console.log("Limiter should have debug enabled");
     const quotaExceeded = await limiter.isQuotaExceededOrRecordCall();
     if (quotaExceeded) {

@@ -9,7 +9,8 @@ before_install:
     - npm i -g npm
 
 install:
-    - npm i
+    - npm i -g firebase firebase-tools
+    - firebase setup:emulators:firestore
 
 script:
-    - NODE_ENV=production npm run build
+    - ./firestore/rules-test/scripts/run-tests.sh

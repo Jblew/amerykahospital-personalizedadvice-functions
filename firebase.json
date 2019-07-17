@@ -1,7 +1,7 @@
 {
   "firestore": {
-    "rules": "firebase/firestore.rules",
-    "indexes": "firebase/firestore.indexes"
+    "rules": "firestore/firestore.rules",
+    "indexes": "firestore/firestore.indexes"
   },
   "functions": {
     "predeploy": [
