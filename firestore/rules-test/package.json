@@ -4,12 +4,15 @@
         "check": "if echo \"$(node --version)\" | grep -q \"$(cat ../.nvmrc)\"; then echo \"Node version correct\"; else echo \"Node version does not match that in .nvmrc\" && exit 1; fi",
         "build:lint": "tslint -c tslint.json -p tsconfig.lint.json",
         "build": "npm run check && npm run build:lint",
-        "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register"
+        "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register",
+        "test": "./scripts/run-tests.sh"
     },
     "engines": {
         "node": "8"
     },
-    "dependencies": {},
+    "dependencies": {
+        "amerykahospital-personalizedadvice-core": "^1.0.1"
+    },
     "devDependencies": {
         "@firebase/testing": "^0.11.5",
         "@types/bluebird": "^3.5.27",

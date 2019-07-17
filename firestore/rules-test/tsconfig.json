@@ -10,7 +10,7 @@
         "allowJs": false,
         "sourceMap": true,
         "outDir": "dist",
-        "baseUrl": "test/",
+        "baseUrl": "src/",
         "paths": {
             "*": [
                 "node_modules/*",
