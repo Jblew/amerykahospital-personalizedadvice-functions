@@ -13,4 +13,4 @@ install:
     - firebase setup:emulators:firestore
 
 script:
-    - ./firestore/rules-test/scripts/run-tests.sh
+    - npm run --prefix=./firestore/rules-test test
