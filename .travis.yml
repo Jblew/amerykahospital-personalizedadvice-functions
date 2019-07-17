@@ -1,25 +1,27 @@
 dist: xenial
 language: node_js
 sudo: false
+
 branches:
-  except:
-  - "/^v[0-9]/"
+    except:
+        - /^v[0-9]/
+
 before_install:
-- npm i -g npm
+    - npm i -g npm
+
 install:
-- npm i -g firebase firebase-tools
-- firebase setup:emulators:firestore
-- npm install --prefix=./firestore/rules-test
+    - npm i -g firebase firebase-tools
+    - firebase setup:emulators:firestore
+    - npm install --prefix=./firestore/rules-test
+
 script:
-- npm run --prefix=./firestore/rules-test test
+    - npm run --prefix=./firestore/rules-test test
+
 deploy:
-  provider: firebase
-  skip_cleanup: true
-  on:
-    tags: false
-    branch: master
-  token:
-    secure: g5Wf7JNhI25Kw9+0oABLKrNCnETs6jIoEQbXC5emYVxiniDYfPR7AFIMJLnyePmLZPlMQwpg+6Wyb5A5MI9wnfLsfEGa1sXsWN54X48UAwjaJ4VQCcD6ryreMxW+JXF8QlFnKWyNzHjMjlPl09oVZhAHqVoddCWfuOJJOk4SyQB0yiKHIvh1FPuWQY1xqFDxmsTuipAHMyVcJ4WQXbjW9errc3Rs/uR7X9IY73f9T0MD+wlucE+JY+9REURl/W1Qiet0p5FYwrXh+3j0M9wNG8zOOg8dq3IulMzhjHqRyP2FWm6FBWwCUa8KZuqvl/7Ivlg7C75M4WbfK4bvjR7xdDV9BbK2qXrfqVjH4yQhzfr7I75dS4UK/5s498SOe2GYEFNj4u65+cY+r8obhcTZeYkneDGa76YLCrjW+m3qI7uPLs0NCCs8UwzHj+Dk53YI4zlsEdLuyjmjV92DcRdmQnuCKSMtJuHjE6qSE2wJQR0gUCgZ4OcthSNx86gaPGFyr/tivmYu9/xO6fFbTOK/xFC6K33TQ9EIsZBizax9KvK1hn4+W8sJycXU/qchNWdT1ROKFnFZrMLd4IeowGPJOMqSRp7emfJH7YMAFsJiqea3fD9WZxrxL720XfS48DXxkbtXUtc70eZnziAEz+EXstuX8hOplP9dWcc5/zvKNhk=
-env:
-  global:
-    secure: ajwPAPTsecmpjIJHRL/JOeyIMXbx1B969ky8H+1paqOZcp3fOCp8j82xQbrC8Xa6/uAurc/JKbS/xevUo8u6DrdEeVEnWqyifwTLtQwqOiW25X5vIN9iwj6sGRiyX6HddDElcyFyCr9g4+s4zFlSYegWrt6SOgRCsq8LSMU6o0M69TBDXemm0iM7QTbbbgOkl/BvWD/zEIkjRN37oS4SQpYHfft9N4HvVsXOJxSN8z+9F8b43ug6L2GmRF4b2cSHHGueMr5pBdAtM79s4m9QCQ5nFa2Kuho+CVf3ed6v/uoJYl8vxojbSpkRu+oI3O/KZAhPg8e6YCXdKQdu21p1IZn6yjXpLgkr4kBuzKyF54B89lJfBu+aN2SkLSCjc7E7bc1P106IzpbfExWj8n3UaFdy9buWOAZOKvzJ6eHI8upzkvdVOHTvChTJhQO9q6p7EP4/S+rQB7p0VknMf3TroVua1zsjWE2OsfhA5oCVgMh55UcQ/lfalpRFCUnf5g7whMdUJetML7AcHykAxjbWSPMmqRq9djvcClpqUzZio237MO1pA8J358fFfRMGoSmkwCCZZW6FRc4nWnrJG2qtubPrhyjLAZrMJf9WaYZYjjtQr4LX4fUaqLBZVz0BNTdsERuKpP5xmp7MrlV+0BL3PuD6AeiHgd04uxPiQvlJozM=
+    provider: firebase
+    skip_cleanup: true
+    on:
+        tags: false
+        branch: master
+    token:
+        secure: "jB5uVU0/lmRyNkRfk/c58/WQmhD8U3k+GU/Xeh16vJbMlSmu1KRtuS/5Wtlg+VoPqD9V4Mz2f23Fgrh1kklXHRUXAmFGE/TZadkpqphIbtLc0F3yGrld3TXSrRkvNmTm+QvhCEObLMToIu5QD/rVTHPLbsCKCthuKEp3tnXQYDRGbViasanlGzBzhLMP87bqzJ5QZ98Zm3fWARUWkiYtx/SQH0e9TJzVi5VopXkoipUklO15rBEuepaJ7UokejlQlz6G3kdHuWaM/mbXmDBPaq+W0y2WZt0kmFm1ZwoFFj+HQFpZ0Yo78Z/UXTE+ENcPC/aDQ6luPoyetwyniWnij8dd9ImxxgmKo31KBZev4CXXqu9UFRtpB26lUmeLVK1ptpBNClT02aI8LJOBRijOLBCk5mcUtbpGSK0OTiTsuVk9BfWvf3uCWDtAofK23wzst3SZheaHs/O3qEIx7pv/WBZQGWTEF09wlCep2GBKOjImytvkjlWs27PD6CEEdi2e0+1rn5jZ0C5NcxCc41nUw3OoBYqp9A0wpZZYgn/UXltZEI2q9fYhK0lTMMsNwEY7DThiO/noXIJGn67cDg+GfI843Da2RhtKUspEAKH3CdsII5NX8nOejs1hhETqC5/dZBcNvOnLL485+ayGaiFgFKf+ymW63Pbh5QkB9pfX0lM="
