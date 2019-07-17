@@ -15,3 +15,12 @@ install:
 
 script:
     - npm run --prefix=./firestore/rules-test test
+
+deploy:
+    provider: firebase
+    skip_cleanup: true
+    on:
+        tags: false
+        branch: master
+    token:
+        secure: g5Wf7JNhI25Kw9+0oABLKrNCnETs6jIoEQbXC5emYVxiniDYfPR7AFIMJLnyePmLZPlMQwpg+6Wyb5A5MI9wnfLsfEGa1sXsWN54X48UAwjaJ4VQCcD6ryreMxW+JXF8QlFnKWyNzHjMjlPl09oVZhAHqVoddCWfuOJJOk4SyQB0yiKHIvh1FPuWQY1xqFDxmsTuipAHMyVcJ4WQXbjW9errc3Rs/uR7X9IY73f9T0MD+wlucE+JY+9REURl/W1Qiet0p5FYwrXh+3j0M9wNG8zOOg8dq3IulMzhjHqRyP2FWm6FBWwCUa8KZuqvl/7Ivlg7C75M4WbfK4bvjR7xdDV9BbK2qXrfqVjH4yQhzfr7I75dS4UK/5s498SOe2GYEFNj4u65+cY+r8obhcTZeYkneDGa76YLCrjW+m3qI7uPLs0NCCs8UwzHj+Dk53YI4zlsEdLuyjmjV92DcRdmQnuCKSMtJuHjE6qSE2wJQR0gUCgZ4OcthSNx86gaPGFyr/tivmYu9/xO6fFbTOK/xFC6K33TQ9EIsZBizax9KvK1hn4+W8sJycXU/qchNWdT1ROKFnFZrMLd4IeowGPJOMqSRp7emfJH7YMAFsJiqea3fD9WZxrxL720XfS48DXxkbtXUtc70eZnziAEz+EXstuX8hOplP9dWcc5/zvKNhk=
