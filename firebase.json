@@ -8,12 +8,6 @@
       "npm --prefix \"$RESOURCE_DIR\" run lint",
       "npm --prefix \"$RESOURCE_DIR\" run build"
     ],
-    "source": "modules/firebase-functions"
-  },
-  "hosting": {
-    "public": "public/_site",
-    "predeploy": [
-      "cd public && jekyll build"
-    ]
+    "source": "functions"
   }
 }
