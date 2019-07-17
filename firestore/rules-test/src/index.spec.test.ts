@@ -218,8 +218,26 @@ describe("Firebase rules", () => {
     });
 
     describe("Collection " + FirestoreCollections.MEDICALPROFESSIONAL_UIDS_COLLECTION, () => {
-        it.skip("Everybody can list");
-        it.skip("Authenticated user can not create");
+        const collName = FirestoreCollections.MEDICALPROFESSIONAL_UIDS_COLLECTION;
+
+        it("Everybody can list", async () => {
+            const { adminDoc, clientFirestore } = mock({ clientAuth: undefined });
+            await adminDoc(collName, "u1").set({ da: "ta" });
+            await adminDoc(collName, "u2").set({ da: "ta" });
+
+            const documents = (await clientFirestore.collection(collName).get()).docs.map(doc => doc.data());
+
+            expect(documents)
+                .to.be.an("array")
+                .with.length(2);
+        });
+
+        it("Authenticated user can not create", async () => {
+            const uid = `user${uuid()}`;
+            const { clientDoc, markAsMedicalProfessional } = mock({ clientAuth: { uid } });
+            await markAsMedicalProfessional(uid);
+            await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.rejectedWith("false");
+        });
     });
 
     describe("Collection " + FirestoreCollections.SENT_CODES_COLLECTION_KEY, () => {
