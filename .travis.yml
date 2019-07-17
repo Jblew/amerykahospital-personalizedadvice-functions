@@ -13,6 +13,7 @@ install:
     - npm i -g firebase firebase-tools
     - firebase setup:emulators:firestore
     - npm install --prefix=./firestore/rules-test
+    - npm install --prefix=./functions
 
 script:
     - npm run --prefix=./firestore/rules-test test
