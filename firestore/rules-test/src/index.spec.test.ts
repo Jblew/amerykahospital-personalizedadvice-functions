@@ -167,16 +167,59 @@ describe("Firebase rules", () => {
         });
 
         describe("update", () => {
-            it.skip("Is not allowed when user is not authenticated");
-            it.skip("Is not allowed when user is not medical professional but is authenticated");
-            it.skip("Is allowed when user is a medical professional");
-            it.skip("Is not allowed when advice belongs to a user and authenticated");
-            it.skip("Is allowed when advice does not belong to any user and authenticated");
+            it("Is not allowed when user is not authenticated", async () => {
+                const { adminDoc, clientDoc } = mock({ clientAuth: undefined });
+                await adminDoc(collName, "doc").set({ da: "ta" });
+
+                await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.rejectedWith("false");
+            });
+
+            it("Is not allowed when user is not medical professional but is authenticated", async () => {
+                const uid = `user${uuid()}`;
+                const { adminDoc, clientDoc } = mock({ clientAuth: { uid } });
+                await adminDoc(collName, "doc").set({ da: "ta", uid: "" });
+
+                await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.rejectedWith("false");
+            });
+
+            it("Is allowed when user is a medical professional", async () => {
+                const uid = `user${uuid()}`;
+                const { adminDoc, clientDoc, markAsMedicalProfessional } = mock({ clientAuth: { uid } });
+                await adminDoc(collName, "doc").set({ da: "ta" });
+                await markAsMedicalProfessional(uid);
+
+                await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.fulfilled;
+            });
+
+            it("Is not allowed when advice belongs to another user and authenticated", async () => {
+                const { uid, anotherUid } = { uid: `user${uuid()}`, anotherUid: `user${uuid()}` };
+                const { adminDoc, clientDoc } = mock({ clientAuth: { uid } });
+                await adminDoc(collName, "doc").set(sampleAdvice(anotherUid));
+
+                await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.rejectedWith("false");
+            });
+
+            it("Is not allowed when advice belongs to this user and authenticated", async () => {
+                const uid = `user${uuid()}`;
+                const { adminDoc, clientDoc } = mock({ clientAuth: { uid } });
+                await adminDoc(collName, "doc").set(sampleAdvice(uid));
+
+                await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.rejectedWith("false");
+            });
+
+            it("Is allowed when advice does not belong to any user and authenticated", async () => {
+                const uid = `user${uuid()}`;
+                const { adminDoc, clientDoc } = mock({ clientAuth: { uid } });
+                await adminDoc(collName, "doc").set(sampleAdvice());
+
+                await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.fulfilled;
+            });
         });
     });
 
     describe("Collection " + FirestoreCollections.MEDICALPROFESSIONAL_UIDS_COLLECTION, () => {
         it.skip("Everybody can list");
+        it.skip("Authenticated user can not create");
     });
 
     describe("Collection " + FirestoreCollections.SENT_CODES_COLLECTION_KEY, () => {
