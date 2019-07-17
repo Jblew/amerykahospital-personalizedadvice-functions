@@ -12,6 +12,7 @@ before_install:
 install:
     - npm i -g firebase firebase-tools
     - firebase setup:emulators:firestore
+    - npm install --prefix=./firestore/rules-test
 
 script:
     - npm run --prefix=./firestore/rules-test test
@@ -24,7 +25,3 @@ deploy:
         branch: master
     token:
         secure: g5Wf7JNhI25Kw9+0oABLKrNCnETs6jIoEQbXC5emYVxiniDYfPR7AFIMJLnyePmLZPlMQwpg+6Wyb5A5MI9wnfLsfEGa1sXsWN54X48UAwjaJ4VQCcD6ryreMxW+JXF8QlFnKWyNzHjMjlPl09oVZhAHqVoddCWfuOJJOk4SyQB0yiKHIvh1FPuWQY1xqFDxmsTuipAHMyVcJ4WQXbjW9errc3Rs/uR7X9IY73f9T0MD+wlucE+JY+9REURl/W1Qiet0p5FYwrXh+3j0M9wNG8zOOg8dq3IulMzhjHqRyP2FWm6FBWwCUa8KZuqvl/7Ivlg7C75M4WbfK4bvjR7xdDV9BbK2qXrfqVjH4yQhzfr7I75dS4UK/5s498SOe2GYEFNj4u65+cY+r8obhcTZeYkneDGa76YLCrjW+m3qI7uPLs0NCCs8UwzHj+Dk53YI4zlsEdLuyjmjV92DcRdmQnuCKSMtJuHjE6qSE2wJQR0gUCgZ4OcthSNx86gaPGFyr/tivmYu9/xO6fFbTOK/xFC6K33TQ9EIsZBizax9KvK1hn4+W8sJycXU/qchNWdT1ROKFnFZrMLd4IeowGPJOMqSRp7emfJH7YMAFsJiqea3fD9WZxrxL720XfS48DXxkbtXUtc70eZnziAEz+EXstuX8hOplP9dWcc5/zvKNhk=
-
-env:
-    global:
-        secure: PbfCNTKGUxB24KMGHCbS1iXBNLKUvlxBLu8Bxjy5ABSLFJPNUdHmLQdEPob/WGIDCQiR53/5INgq7kW3zO8qBy6MhBtO7L9+Wxz8skbQsf15dvgcS/GO4204Sm57i4Pk5bRb3LGJ4oaH+mohez6egMxJqH5Ozz5vJa7ERFWhTJ/vYdVGqVqtb5oy8z4l8jr5lIiJ35LZVAtBm5uQo9Lm1MaM/Tx2cE2Czw8+N9wgJSbCYS5eOmjjgQXN9DCqAe4PAyR4nAOFqMlwgKyVjhvw2mG0YR8ukQLUXhTxHPmi/HJALENS2z/aw/1LkjxuMBIIW9j/C6awslI6HgKW7O0Ztz9hIeLAy+BZzPGz/GV5HejdYtPdY6f2eEtsPlk3/qzf8l8ff6dFPDosQkNVQVpiBxPup1JUzIqaX2/LUtjTFDCtnvq82wNWM1qCZHv2we38mcYck9v9BMmEvz297xMBLiyTnifoL4bLpUy1VapErpiGq4xuIEuBlmC2rTMUaguyW8j/m9S0GZXUTOB6U4aUznW7hIBSkEuUg4KIP0bFlfeQPgQXAfBYp5G02LllerfwbLzxZGnerp3UQiIAUt3U66ynQagV7Ilg7+R1A7T5YvFxyD0iTFG7neh37tsPYnBi3UXd65W9vQK6wWd4DtWhz0t8RBmRbxRSmWUS9b/MenI=
