@@ -4,3 +4,4 @@
 /serviceAccount.credentials.json
 /dist-public
 /.firebase
+firebase-debug.log
