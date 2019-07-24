@@ -74,7 +74,7 @@ export class AddAdviceFunction {
 
     private dataToAdvice(data: any): Advice {
         if (data.id) throw new Error("You cannot specify id of an advice before it is added");
-        Advice.validate({ id: "-allow-empty-id-", ...data });
+        Advice.validate({ ...data, id: "-allow-empty-id-" });
         return data as Advice;
     }
 
