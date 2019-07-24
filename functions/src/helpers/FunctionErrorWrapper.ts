@@ -6,11 +6,11 @@ export class FunctionErrorWrapper {
             const res: T = await fn();
             return res;
         } catch (error) {
-            if (error.name.indexOf("HttpsError") >= 0) throw error;
+            if ("code" in error) throw error;
             else {
                 // tslint:disable no-console
                 console.error(error);
-                throw new functions.https.HttpsError("unknown", "Unknown error: " + error);
+                throw new functions.https.HttpsError("unknown", "" + error);
             }
         }
     }
