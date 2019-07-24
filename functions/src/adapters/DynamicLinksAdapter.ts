@@ -1,6 +1,7 @@
 import { FIREBASE_CONFIG } from "amerykahospital-personalizedadvice-core";
 import Axios from "axios";
 
+import { Log } from "../Log";
 import { AxiosErrorTransformer } from "../util/AxiosErrorTransformer";
 
 export class DynamicLinksAdapter {
@@ -28,7 +29,13 @@ export class DynamicLinksAdapter {
                 }),
         );
         if (resp.status !== 200) throw new Error("Could not create dynamic link, status code = " + resp.status);
-        return resp.data;
+
+        if (resp.data && resp.data.shortLink) {
+            return resp.data.shortLink;
+        } else {
+            Log.log().error("Malformed response from firebase dynamic links", resp.data);
+            throw new Error("Malformed response from firebase dynamic links");
+        }
     }
 }
 
