@@ -17,9 +17,9 @@ export class AddAdviceFunction {
         this.perPhoneNumberLimiter = this.constructPerPhoneNumberLimiter();
     }
 
-    public getFunction(builder: functions.FunctionBuilder): functions.Runnable<any> {
+    public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
         const handlerTypeGuarded: FirebaseFunctionDefinitions.AddAdvice.Function = this.functionHandler;
-        return builder.https.onCall(handlerTypeGuarded);
+        return (builder || functions).https.onCall(handlerTypeGuarded);
     }
 
     private async functionHandler(

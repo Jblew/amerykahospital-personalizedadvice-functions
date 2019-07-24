@@ -10,6 +10,4 @@ const db = admin.firestore();
 
 //
 const addAdviceFunctionFactory = new AddAdviceFunction(db);
-exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = addAdviceFunctionFactory.getFunction(
-    functions.region("europe-west2"),
-);
+exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = addAdviceFunctionFactory.getFunction();
