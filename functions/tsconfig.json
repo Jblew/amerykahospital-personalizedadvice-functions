@@ -6,7 +6,7 @@
     "strict": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "esModuleInterop": false,
     "noImplicitAny": true,
     "allowJs": false,
     "outDir": "lib",
