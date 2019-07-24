@@ -2,7 +2,7 @@ import { FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
-import { AddAdviceFunction } from "./functions/AddAdviceFunction";
+import { AddAdviceFunction } from "./functions/addadvice/AddAdviceFunction";
 
 //
 admin.initializeApp(functions.config().firebase);

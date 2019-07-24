@@ -2,10 +2,10 @@ import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahosp
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
-import { Config } from "../Config";
-import { AlmostUniqueShortIdGenerator } from "../helpers/AlmostUniqueShortIdGenerator";
-import { AuthHelper } from "../helpers/AuthHelper";
-import { FunctionErrorWrapper } from "../helpers/FunctionErrorWrapper";
+import { Config } from "../../Config";
+import { AlmostUniqueShortIdGenerator } from "../../helpers/AlmostUniqueShortIdGenerator";
+import { AuthHelper } from "../../helpers/AuthHelper";
+import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 
 export class AddAdviceFunction {
     private db: FirebaseFirestore.Firestore;
