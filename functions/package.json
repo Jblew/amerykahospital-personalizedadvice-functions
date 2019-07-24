@@ -9,7 +9,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register",
-    "test": "npm run test",
+    "test": "npm run do_test",
     "lint-fix": "tslint --fix -c tslint.json -p tsconfig.json"
   },
   "engines": {
@@ -20,7 +20,7 @@
     "amerykahospital-personalizedadvice-core": "^2.2.0",
     "firebase-admin": "^8.0.0",
     "firebase-functions": "^3.0.0",
-    "firebase-functions-rate-limiter": "^1.4.0",
+    "firebase-functions-rate-limiter": "^2.0.0",
     "ow": "^0.13.2"
   },
   "devDependencies": {
