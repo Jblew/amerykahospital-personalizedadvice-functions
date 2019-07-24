@@ -1,7 +1,4 @@
 export class AlmostUniqueShortIdGenerator {
-    private static baseStrChars = "abcdefghijklmnopqrstuvwxyz";
-    private static partLengths: number[] = [3, 3];
-
     public static generateShortAlmostUniqueId() {
         let id = "";
         for (let partNum = 0; partNum < this.partLengths.length; partNum++) {
@@ -24,4 +21,7 @@ export class AlmostUniqueShortIdGenerator {
         }
         throw new Error("AlmostUniqueShortIdGenerator: could not obtain unique id through 10 tries");
     }
+
+    private static baseStrChars = "abcdefghijklmnopqrstuvwxyz";
+    private static partLengths: number[] = [3, 3];
 }

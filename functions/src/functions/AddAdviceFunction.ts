@@ -2,8 +2,8 @@ import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahosp
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
+import { AlmostUniqueShortIdGenerator } from "../helpers/AlmostUniqueShortIdGenerator";
 import { AuthHelper } from "../helpers/AuthHelper";
-import { AlmostUniqueShortIdGenerator } from "../helpers/IdGenerator";
 
 export class AddAdviceFunction {
     private db: FirebaseFirestore.Firestore;
