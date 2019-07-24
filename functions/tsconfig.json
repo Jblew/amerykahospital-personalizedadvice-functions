@@ -10,7 +10,7 @@
     "noImplicitAny": true,
     "allowJs": false,
     "outDir": "lib",
-    "target": "es5",
+    "target": "es6",
     "baseUrl": "src/",
     "paths": {
       "*": [
