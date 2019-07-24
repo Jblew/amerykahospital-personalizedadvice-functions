@@ -3,6 +3,7 @@ import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
 import { AuthHelper } from "../helpers/AuthHelper";
+import { AlmostUniqueShortIdGenerator } from "../helpers/IdGenerator";
 
 export class AddAdviceFunction {
     private db: FirebaseFirestore.Firestore;
@@ -31,11 +32,14 @@ export class AddAdviceFunction {
         await this.perUserLimiter.rejectIfQuotaExceededOrRecordCall("u_" + (context.auth as { uid: string }).uid);
         const advice = this.dataToAdvice(data);
         await this.perPhoneNumberLimiter.rejectIfQuotaExceededOrRecordCall("p_" + advice.parentPhoneNumber);
-        await this.addAdvice(data as Advice);
+        const id = await this.obtainUniqueId();
+        advice.id = id;
+        await this.addAdvice(advice);
 
         log += "Advice added";
         return {
             log,
+            adviceId: id,
         };
     }
 
@@ -62,8 +66,13 @@ export class AddAdviceFunction {
     }
 
     private dataToAdvice(data: any): Advice {
-        Advice.validate(data);
+        if (data.id) throw new Error("You cannot specify id of an advice before it is added");
+        Advice.validate({ id: "-allow-empty-id-", ...data });
         return data as Advice;
+    }
+
+    private async obtainUniqueId(): Promise<string> {
+        return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) => AdvicesManager.adviceExists(id));
     }
 
     private async addAdvice(advice: Advice) {
