@@ -79,7 +79,9 @@ export class AddAdviceFunction {
     }
 
     private async obtainUniqueId(): Promise<string> {
-        return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) => AdvicesManager.adviceExists(id));
+        return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) =>
+            AdvicesManager.adviceExists(id, this.db as any),
+        );
     }
 
     private async addAdvice(advice: Advice) {
