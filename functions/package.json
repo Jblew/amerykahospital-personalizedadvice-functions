@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "amerykahospital-personalizedadvice-serverless-functions",
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
@@ -24,7 +24,8 @@
     "firebase-admin": "^8.0.0",
     "firebase-functions": "^3.0.0",
     "firebase-functions-rate-limiter": "^2.0.0",
-    "ow": "^0.13.2"
+    "ow": "^0.13.2",
+    "universe-log": "^1.4.5"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.27",
