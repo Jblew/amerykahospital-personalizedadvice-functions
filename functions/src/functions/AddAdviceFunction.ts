@@ -2,6 +2,7 @@ import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahosp
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
+import { Config } from "../Config";
 import { AlmostUniqueShortIdGenerator } from "../helpers/AlmostUniqueShortIdGenerator";
 import { AuthHelper } from "../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../helpers/FunctionErrorWrapper";
@@ -35,9 +36,9 @@ export class AddAdviceFunction {
             let log = "";
             await AuthHelper.assertAuthenticated(context);
             await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
-            await this.perUserLimiter.rejectIfQuotaExceededOrRecordCall("u_" + (context.auth as { uid: string }).uid);
+            await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
             const advice = this.dataToAdvice(data);
-            await this.perPhoneNumberLimiter.rejectIfQuotaExceededOrRecordCall("p_" + advice.parentPhoneNumber);
+            await this.perPhoneNumberLimiter.rejectOnQuotaExceeded("p_" + advice.parentPhoneNumber);
             const id = await this.obtainUniqueId();
             advice.id = id;
             await this.addAdvice(advice);
@@ -51,22 +52,24 @@ export class AddAdviceFunction {
     }
 
     private constructPerUserLimiter() {
+        const conf = Config.addAdvice.limits.perUser;
         return new FirebaseFunctionsRateLimiter(
             {
                 firebaseCollectionKey: "addadvice_per_user_limiter",
-                maxCallsPerPeriod: 2,
-                periodSeconds: 60,
+                maxCallsPerPeriod: conf.calls,
+                periodSeconds: conf.periodS,
             },
             this.db,
         );
     }
 
     private constructPerPhoneNumberLimiter() {
+        const conf = Config.addAdvice.limits.perPhone;
         return new FirebaseFunctionsRateLimiter(
             {
                 firebaseCollectionKey: "addadvice_per_phone_limiter",
-                maxCallsPerPeriod: 3,
-                periodSeconds: 60 * 60,
+                maxCallsPerPeriod: conf.calls,
+                periodSeconds: conf.periodS,
             },
             this.db,
         );
