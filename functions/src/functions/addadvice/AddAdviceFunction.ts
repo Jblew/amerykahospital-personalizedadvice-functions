@@ -7,6 +7,8 @@ import { AlmostUniqueShortIdGenerator } from "../../helpers/AlmostUniqueShortIdG
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 
+import { AdviceLinkSender } from "./AdviceLinkSender";
+
 export class AddAdviceFunction {
     private db: FirebaseFirestore.Firestore;
     private perUserLimiter: FirebaseFunctionsRateLimiter;
@@ -42,6 +44,7 @@ export class AddAdviceFunction {
             const id = await this.obtainUniqueId();
             advice.id = id;
             await this.addAdvice(advice);
+            await AdviceLinkSender.sendAdviceLinkToPatient(advice, this.db);
 
             log += "Advice added";
             return {
