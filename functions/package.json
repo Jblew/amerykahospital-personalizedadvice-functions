@@ -8,6 +8,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
+    "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register",
+    "test": "npm run test",
     "lint-fix": "tslint --fix -c tslint.json -p tsconfig.json"
   },
   "engines": {
@@ -22,9 +24,26 @@
     "ow": "^0.13.2"
   },
   "devDependencies": {
+    "firebase-functions-test": "^0.1.6",
     "tslint": "^5.12.0",
     "typescript": "^3.2.2",
-    "jblew-tslint-config": "^0.1.0"
+    "jblew-tslint-config": "^0.1.0",
+    "@types/bluebird": "^3.5.27",
+    "@types/chai": "4.1.7",
+    "@types/chai-as-promised": "7.1.0",
+    "@types/lodash": "^4.14.136",
+    "@types/mocha": "5.2.7",
+    "@types/node": "^12.6.3",
+    "@types/sinon": "7.0.13",
+    "@types/uuid": "^3.4.5",
+    "bluebird": "^3.5.5",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "lodash": "4.17.14",
+    "mocha": "6.1.4",
+    "sinon": "7.3.2",
+    "ts-node": "8.3.0",
+    "uuid": "^3.3.2"
   },
   "private": true
 }

@@ -4,6 +4,7 @@ import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
 import { AlmostUniqueShortIdGenerator } from "../helpers/AlmostUniqueShortIdGenerator";
 import { AuthHelper } from "../helpers/AuthHelper";
+import { FunctionErrorWrapper } from "../helpers/FunctionErrorWrapper";
 
 export class AddAdviceFunction {
     private db: FirebaseFirestore.Firestore;
@@ -18,29 +19,35 @@ export class AddAdviceFunction {
     }
 
     public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
-        const handlerTypeGuarded: FirebaseFunctionDefinitions.AddAdvice.Function = this.functionHandler;
-        return (builder || functions).https.onCall(handlerTypeGuarded);
+        return (builder || functions).https.onCall(this.getFunctionHandler());
+    }
+
+    public getFunctionHandler(): FirebaseFunctionDefinitions.AddAdvice.Function {
+        return (data: FirebaseFunctionDefinitions.AddAdvice.Input, context: functions.https.CallableContext) =>
+            this.functionHandler(data, context);
     }
 
     private async functionHandler(
         data: FirebaseFunctionDefinitions.AddAdvice.Input,
         context: functions.https.CallableContext,
     ): Promise<FirebaseFunctionDefinitions.AddAdvice.Result> {
-        let log = "";
-        await AuthHelper.assertAuthenticated(context);
-        await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
-        await this.perUserLimiter.rejectIfQuotaExceededOrRecordCall("u_" + (context.auth as { uid: string }).uid);
-        const advice = this.dataToAdvice(data);
-        await this.perPhoneNumberLimiter.rejectIfQuotaExceededOrRecordCall("p_" + advice.parentPhoneNumber);
-        const id = await this.obtainUniqueId();
-        advice.id = id;
-        await this.addAdvice(advice);
+        return FunctionErrorWrapper.wrap(async () => {
+            let log = "";
+            await AuthHelper.assertAuthenticated(context);
+            await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
+            await this.perUserLimiter.rejectIfQuotaExceededOrRecordCall("u_" + (context.auth as { uid: string }).uid);
+            const advice = this.dataToAdvice(data);
+            await this.perPhoneNumberLimiter.rejectIfQuotaExceededOrRecordCall("p_" + advice.parentPhoneNumber);
+            const id = await this.obtainUniqueId();
+            advice.id = id;
+            await this.addAdvice(advice);
 
-        log += "Advice added";
-        return {
-            log,
-            adviceId: id,
-        };
+            log += "Advice added";
+            return {
+                log,
+                adviceId: id,
+            };
+        });
     }
 
     private constructPerUserLimiter() {
