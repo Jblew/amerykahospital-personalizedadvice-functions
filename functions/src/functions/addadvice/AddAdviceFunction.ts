@@ -1,4 +1,10 @@
-import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import {
+    Advice,
+    AdvicesManager,
+    FirebaseFunctionDefinitions,
+    PendingAdvice,
+} from "amerykahospital-personalizedadvice-core";
+import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
@@ -78,16 +84,24 @@ export class AddAdviceFunction {
         );
     }
 
-    private dataToAdvice(data: any): Advice {
+    private dataToPendingAdvice(data: any): PendingAdvice {
         if (data.id) throw new Error("You cannot specify id of an advice before it is added");
-        Advice.validate({ ...data, id: "-allow-empty-id-" });
-        return data as Advice;
+        PendingAdvice.validate(data);
+        return data as PendingAdvice;
     }
 
     private async obtainUniqueId(): Promise<string> {
         return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) =>
             AdvicesManager.adviceExists(id, this.db as any),
         );
+    }
+
+    private pendingAdviceToAdvice(pendingAdvice: PendingAdvice, id: string): Advice {
+        return {
+            ...pendingAdvice,
+            id,
+            timestamp: admin.firestore.Timestamp.now().seconds,
+        };
     }
 
     private async addAdvice(advice: Advice) {

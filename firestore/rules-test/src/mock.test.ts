@@ -46,8 +46,8 @@ export function sampleAdvice(uid?: string) {
         patientName: "patient-" + uuid(),
         medicalprofessionalName: "medicalprofessional-" + uuid(),
         parentPhoneNumber: "123123123",
-        dateISO: new Date().toISOString(),
         advice: "advice-" + uuid(),
+        timestamp: Date.now() / 1000,
     };
     if (uid) advice.uid = uid; // firebase catches the difference between undefined and nonexistent attr
     return advice;

@@ -6,8 +6,8 @@ export const Config = {
                 periodS: 60,
             },
             perPhone: {
-                calls: 3,
-                periodS: 60 * 60,
+                calls: 4,
+                periodS: 40 * 60,
             },
         },
     },
