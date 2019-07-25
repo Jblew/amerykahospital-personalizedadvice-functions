@@ -13,8 +13,6 @@ import { AlmostUniqueShortIdGenerator } from "../../helpers/AlmostUniqueShortIdG
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 
-import { AdviceLinkSender } from "./AdviceLinkSender";
-
 export class AddAdviceFunction {
     private db: FirebaseFirestore.Firestore;
     private perUserLimiter: FirebaseFunctionsRateLimiter;
@@ -41,23 +39,31 @@ export class AddAdviceFunction {
         context: functions.https.CallableContext,
     ): Promise<FirebaseFunctionDefinitions.AddAdvice.Result> {
         return FunctionErrorWrapper.wrap(async () => {
-            let log = "";
-            await AuthHelper.assertAuthenticated(context);
-            await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
-            await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
-            const advice = this.dataToAdvice(data);
-            await this.perPhoneNumberLimiter.rejectOnQuotaExceeded("p_" + advice.parentPhoneNumber);
-            const id = await this.obtainUniqueId();
-            advice.id = id;
-            await this.addAdvice(advice);
-            await AdviceLinkSender.sendAdviceLinkToPatient(advice, this.db);
+            await this.doChecks(data, context);
+            const adviceId = await this.doAddAdvice(data, context);
 
-            log += "Advice added";
             return {
-                log,
-                adviceId: id,
+                log: "Advice added",
+                adviceId,
             };
         });
+    }
+
+    private async doChecks(data: PendingAdvice, context: functions.https.CallableContext) {
+        await AuthHelper.assertAuthenticated(context);
+        await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
+        await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
+
+        if (!data.parentPhoneNumber) throw new Error("Missing phone number");
+        await this.perPhoneNumberLimiter.rejectOnQuotaExceeded("p_" + data.parentPhoneNumber);
+    }
+
+    private async doAddAdvice(data: PendingAdvice, context: functions.https.CallableContext): Promise<string> {
+        const pendingAdvice = this.dataToPendingAdvice(data);
+        const id = await this.obtainUniqueId();
+        const advice = this.pendingAdviceToAdvice(pendingAdvice, id);
+        await this.addAdvice(advice);
+        return id;
     }
 
     private constructPerUserLimiter() {
