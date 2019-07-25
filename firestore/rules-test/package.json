@@ -12,7 +12,7 @@
         "node": "8"
     },
     "dependencies": {
-        "amerykahospital-personalizedadvice-core": "latest"
+        "amerykahospital-personalizedadvice-core": "^6.0.1"
     },
     "devDependencies": {
         "@firebase/testing": "^0.11.5",
