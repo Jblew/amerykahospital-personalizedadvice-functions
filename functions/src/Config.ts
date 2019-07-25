@@ -1,4 +1,7 @@
 export const Config = {
+    sms: {
+        fromName: "Test", // Test is the default, accepted one
+    },
     addAdvice: {
         limits: {
             perUser: {
