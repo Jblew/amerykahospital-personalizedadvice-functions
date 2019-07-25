@@ -1,4 +1,5 @@
 import { FirestoreCollections } from "amerykahospital-personalizedadvice-core";
+import * as admin from "firebase-admin";
 
 import { Log } from "../../Log";
 
@@ -21,6 +22,7 @@ export class SMSMessageSender {
                 phoneNumber,
                 message,
                 result,
+                timestamp: admin.firestore.Timestamp.now().seconds,
             };
             await db.collection(collectionName).add(resultRecord);
         } catch (error) {
