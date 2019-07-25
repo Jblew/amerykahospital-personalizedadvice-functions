@@ -5,6 +5,7 @@ import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { Config } from "../../Config";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
+import { Log } from "../../Log";
 
 import { AdviceDeepLinkGenerator } from "./AdviceDeepLinkGenerator";
 import { SMSMessageSender } from "./SMSMessageSender";
@@ -35,6 +36,7 @@ export class SendSMSFunction {
         context: functions.https.CallableContext,
     ): Promise<FirebaseFunctionDefinitions.SendSMS.Result> {
         return FunctionErrorWrapper.wrap(async () => {
+            Log.log().info("Begin SendSMSFunction.functionHandler with data", data);
             await this.doChecks(context);
             const adviceId = this.getAdviceIdFromData(data);
             const advice = await this.getAdvice(adviceId);
@@ -42,7 +44,7 @@ export class SendSMSFunction {
             const smsResult = await this.sendSMS(advice.parentPhoneNumber, message);
 
             return {
-                message,
+                message: "Sent " + message,
                 smsResult,
             };
         });
@@ -74,6 +76,7 @@ export class SendSMSFunction {
 
     private async sendSMS(phoneNumber: string, message: string): Promise<string> {
         await this.limitSMSApiCalls(phoneNumber);
+        Log.log().info("Calling SMSMessageSender.sendSMS");
         return await SMSMessageSender.sendSMS(phoneNumber, message, this.db);
     }
 

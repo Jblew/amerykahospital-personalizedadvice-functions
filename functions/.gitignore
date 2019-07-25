@@ -7,3 +7,5 @@ typings/
 
 node_modules/
 lib/
+
+/firestore-debug.log
