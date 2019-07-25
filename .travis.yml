@@ -18,6 +18,7 @@ install:
 script:
     - npm run --prefix=./firestore/rules-test test
     - npm run --prefix=./functions test
+#   - npm run --prefix=./functions verify
 
 deploy:
     provider: firebase
