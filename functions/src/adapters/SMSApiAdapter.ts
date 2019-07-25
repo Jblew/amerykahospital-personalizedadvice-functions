@@ -39,6 +39,7 @@ export class SMSApiAdapter {
     private buildQuery(phoneNumber: string, message: string): smsapi.MessageBuilder {
         const builder = this.smsApi.message
             .sms()
+            .normalize()
             .from(Config.sms.fromName)
             .to(phoneNumber)
             .message(message);

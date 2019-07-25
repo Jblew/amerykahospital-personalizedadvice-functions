@@ -20,6 +20,7 @@ declare module "smsapi" {
             to(phoneNumber: string): MessageBuilder;
             message(msg: string): MessageBuilder;
             test(): MessageBuilder;
+            normalize(): MessageBuilder;
             execute(): Promise<BatchSendResult>;
         }
 
