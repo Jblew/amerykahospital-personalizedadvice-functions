@@ -34,6 +34,7 @@ export class ImportAdviceToUserFunction {
             const uid = (context.auth as { uid: string }).uid;
             const adviceId = this.getAdviceIdFromData(data);
             const advice = await this.getAdvice(adviceId);
+            await this.assertAdviceNotImportedYet(advice);
             advice.uid = uid;
             await this.updateAdvice(advice);
 
@@ -59,6 +60,10 @@ export class ImportAdviceToUserFunction {
         } else {
             throw new Error("Advice " + adviceId + " does not exist");
         }
+    }
+
+    private async assertAdviceNotImportedYet(advice: Advice) {
+        if (advice.uid) throw new Error("Advice has been already imported");
     }
 
     private async updateAdvice(advice: Advice) {
