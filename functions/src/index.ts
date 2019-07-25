@@ -3,6 +3,7 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
 import { AddAdviceFunction } from "./functions/addadvice/AddAdviceFunction";
+import { ImportAdviceToUserFunction } from "./functions/importadvicetouser/ImportAdviceToUserFunction";
 import { SendSMSFunction } from "./functions/sendsms/SendSMSFunction";
 import { Log } from "./Log";
 
@@ -18,3 +19,6 @@ exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = addAdviceFunctionFactory.g
 
 const sendSMSFunctionFactory = new SendSMSFunction(db);
 exports[FirebaseFunctionDefinitions.SendSMS.NAME] = sendSMSFunctionFactory.getFunction();
+
+const importAdviceToUserFunctionFactory = new ImportAdviceToUserFunction(db);
+exports[FirebaseFunctionDefinitions.ImportAdviceToUser.NAME] = importAdviceToUserFunctionFactory.getFunction();

@@ -23,4 +23,12 @@ export const Config = {
             },
         },
     },
+    importAdviceToUser: {
+        limits: {
+            perUser: {
+                calls: 50,
+                periodS: 30 * 60,
+            },
+        },
+    },
 };
