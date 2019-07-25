@@ -21,6 +21,30 @@
   //    },
   //   ]
   // ]
-  "indexes": [],
+  "indexes": [{
+    "collectionId": "ahpaa_advices",
+    "fields": [{
+      "fieldPath": "uid",
+      "mode": "ASCENDING"
+    }, {
+      "fieldPath": "timestamp",
+      "mode": "DESCENDING"
+    }]
+  }, {
+    "collectionId": "ahpaa_advices",
+    "fields": [{
+      "fieldPath": "medicalprofessionalName",
+      "mode": "ASCENDING"
+    }, {
+      "fieldPath": "patientName",
+      "mode": "ASCENDING"
+    }, {
+      "fieldPath": "parentPhoneNumber",
+      "mode": "ASCENDING"
+    }, {
+      "fieldPath": "timestamp",
+      "mode": "DESCENDING"
+    }]
+  }],
   "fieldOverrides": []
 }
