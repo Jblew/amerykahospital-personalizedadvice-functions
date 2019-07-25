@@ -37,7 +37,7 @@ export class ImportAdviceToUserFunction {
             advice.uid = uid;
             await this.updateAdvice(advice);
 
-            return advice;
+            return { advice };
         });
     }
 
