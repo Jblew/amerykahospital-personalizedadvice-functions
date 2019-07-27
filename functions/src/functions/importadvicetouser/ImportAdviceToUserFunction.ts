@@ -1,4 +1,5 @@
 import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
@@ -7,11 +8,13 @@ import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 
 export class ImportAdviceToUserFunction {
-    private db: FirebaseFirestore.Firestore;
+    private firestore: FirebaseFirestore.Firestore;
+    private realtimeDb: admin.database.Database;
     private perUserLimiter: FirebaseFunctionsRateLimiter;
 
-    public constructor(db: FirebaseFirestore.Firestore) {
-        this.db = db;
+    public constructor(firestore: FirebaseFirestore.Firestore, realtimeDb: admin.database.Database) {
+        this.firestore = firestore;
+        this.realtimeDb = realtimeDb;
 
         this.perUserLimiter = this.constructPerUserLimiter();
     }
@@ -44,7 +47,7 @@ export class ImportAdviceToUserFunction {
 
     private async doChecks(context: functions.https.CallableContext) {
         await AuthHelper.assertAuthenticated(context);
-        await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
+        await AuthHelper.assertUserIsMedicalProfessional(context, this.firestore);
         await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
     }
 
@@ -54,7 +57,7 @@ export class ImportAdviceToUserFunction {
     }
 
     private async getAdvice(adviceId: string): Promise<Advice> {
-        const advice = await AdvicesManager.getAdvice(adviceId, this.db as any);
+        const advice = await AdvicesManager.getAdvice(adviceId, this.firestore as any);
         if (advice) {
             return advice;
         } else {
@@ -67,18 +70,18 @@ export class ImportAdviceToUserFunction {
     }
 
     private async updateAdvice(advice: Advice) {
-        await AdvicesManager.addAdvice(advice, this.db as any);
+        await AdvicesManager.addAdvice(advice, this.firestore as any);
     }
 
     private constructPerUserLimiter() {
         const conf = Config.importAdviceToUser.limits.perUser;
-        return new FirebaseFunctionsRateLimiter(
+        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
             {
-                firebaseCollectionKey: "importadvicetouser_per_user_limiter",
-                maxCallsPerPeriod: conf.calls,
+                name: "importadvicetouser_per_user_limiter",
+                maxCalls: conf.calls,
                 periodSeconds: conf.periodS,
             },
-            this.db,
+            this.realtimeDb,
         );
     }
 }

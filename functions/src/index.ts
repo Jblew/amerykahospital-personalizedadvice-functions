@@ -11,14 +11,15 @@ Log.log().initialize();
 
 //
 admin.initializeApp(functions.config().firebase);
-const db = admin.firestore();
+const firestore = admin.firestore();
+const realtimeDb = admin.database();
 
 //
-const addAdviceFunctionFactory = new AddAdviceFunction(db);
+const addAdviceFunctionFactory = new AddAdviceFunction(firestore, realtimeDb);
 exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = addAdviceFunctionFactory.getFunction();
 
-const sendSMSFunctionFactory = new SendSMSFunction(db);
+const sendSMSFunctionFactory = new SendSMSFunction(firestore, realtimeDb);
 exports[FirebaseFunctionDefinitions.SendSMS.NAME] = sendSMSFunctionFactory.getFunction();
 
-const importAdviceToUserFunctionFactory = new ImportAdviceToUserFunction(db);
+const importAdviceToUserFunctionFactory = new ImportAdviceToUserFunction(firestore, realtimeDb);
 exports[FirebaseFunctionDefinitions.ImportAdviceToUser.NAME] = importAdviceToUserFunctionFactory.getFunction();

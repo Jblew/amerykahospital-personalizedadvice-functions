@@ -1,4 +1,5 @@
 import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
@@ -11,12 +12,14 @@ import { AdviceDeepLinkGenerator } from "./AdviceDeepLinkGenerator";
 import { SMSMessageSender } from "./SMSMessageSender";
 
 export class SendSMSFunction {
-    private db: FirebaseFirestore.Firestore;
+    private firestore: FirebaseFirestore.Firestore;
+    private realtimeDb: admin.database.Database;
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
 
-    public constructor(db: FirebaseFirestore.Firestore) {
-        this.db = db;
+    public constructor(firestore: FirebaseFirestore.Firestore, realtimeDb: admin.database.Database) {
+        this.firestore = firestore;
+        this.realtimeDb = realtimeDb;
 
         this.perUserLimiter = this.constructPerUserLimiter();
         this.perPhoneNumberLimiter = this.constructPerPhoneNumberLimiter();
@@ -52,7 +55,7 @@ export class SendSMSFunction {
 
     private async doChecks(context: functions.https.CallableContext) {
         await AuthHelper.assertAuthenticated(context);
-        await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
+        await AuthHelper.assertUserIsMedicalProfessional(context, this.firestore);
         await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
     }
 
@@ -62,7 +65,7 @@ export class SendSMSFunction {
     }
 
     private async getAdvice(adviceId: string): Promise<Advice> {
-        const advice = await AdvicesManager.getAdvice(adviceId, this.db as any);
+        const advice = await AdvicesManager.getAdvice(adviceId, this.firestore as any);
         if (advice) {
             return advice;
         } else {
@@ -77,7 +80,7 @@ export class SendSMSFunction {
     private async sendSMS(phoneNumber: string, message: string): Promise<string> {
         await this.limitSMSApiCalls(phoneNumber);
         Log.log().info("Calling SMSMessageSender.sendSMS");
-        return await SMSMessageSender.sendSMS(phoneNumber, message, this.db);
+        return await SMSMessageSender.sendSMS(phoneNumber, message, this.firestore);
     }
 
     private async limitSMSApiCalls(phoneNumber: string) {
@@ -86,25 +89,25 @@ export class SendSMSFunction {
 
     private constructPerUserLimiter() {
         const conf = Config.sendSMS.limits.perUser;
-        return new FirebaseFunctionsRateLimiter(
+        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
             {
-                firebaseCollectionKey: "sendsms_per_user_limiter",
-                maxCallsPerPeriod: conf.calls,
+                name: "sendsms_per_user_limiter",
+                maxCalls: conf.calls,
                 periodSeconds: conf.periodS,
             },
-            this.db,
+            this.realtimeDb,
         );
     }
 
     private constructPerPhoneNumberLimiter() {
         const conf = Config.sendSMS.limits.perPhone;
-        return new FirebaseFunctionsRateLimiter(
+        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
             {
-                firebaseCollectionKey: "sendsms_per_phone_limiter",
-                maxCallsPerPeriod: conf.calls,
+                name: "sendsms_per_phone_limiter",
+                maxCalls: conf.calls,
                 periodSeconds: conf.periodS,
             },
-            this.db,
+            this.realtimeDb,
         );
     }
 }

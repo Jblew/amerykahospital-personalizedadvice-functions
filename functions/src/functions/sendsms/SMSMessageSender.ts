@@ -3,6 +3,7 @@ import { FirestoreCollections } from "amerykahospital-personalizedadvice-core";
 import * as admin from "firebase-admin";
 
 import { SMSApiAdapter } from "../../adapters/SMSApiAdapter";
+import { Config } from "../../Config";
 import { Log } from "../../Log";
 
 export class SMSMessageSender {
@@ -14,7 +15,7 @@ export class SMSMessageSender {
         let result: string = "";
         let error: string = "";
         try {
-            const adapter = new SMSApiAdapter({});
+            const adapter = new SMSApiAdapter({ from: Config.sms.fromName });
             result = await adapter.sendMessage(phoneNumber, message);
         } catch (error) {
             Log.log().info("SMSMessageSender sending error", error);

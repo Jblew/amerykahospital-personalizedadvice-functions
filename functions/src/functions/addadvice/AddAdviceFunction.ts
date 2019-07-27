@@ -14,12 +14,14 @@ import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 
 export class AddAdviceFunction {
-    private db: FirebaseFirestore.Firestore;
+    private firestore: FirebaseFirestore.Firestore;
+    private realtimeDb: admin.database.Database;
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
 
-    public constructor(db: FirebaseFirestore.Firestore) {
-        this.db = db;
+    public constructor(firestore: FirebaseFirestore.Firestore, realtimeDb: admin.database.Database) {
+        this.firestore = firestore;
+        this.realtimeDb = realtimeDb;
 
         this.perUserLimiter = this.constructPerUserLimiter();
         this.perPhoneNumberLimiter = this.constructPerPhoneNumberLimiter();
@@ -51,7 +53,7 @@ export class AddAdviceFunction {
 
     private async doChecks(data: PendingAdvice, context: functions.https.CallableContext) {
         await AuthHelper.assertAuthenticated(context);
-        await AuthHelper.assertUserIsMedicalProfessional(context, this.db);
+        await AuthHelper.assertUserIsMedicalProfessional(context, this.firestore);
         await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
 
         if (!data.parentPhoneNumber) throw new Error("Missing phone number");
@@ -68,25 +70,25 @@ export class AddAdviceFunction {
 
     private constructPerUserLimiter() {
         const conf = Config.addAdvice.limits.perUser;
-        return new FirebaseFunctionsRateLimiter(
+        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
             {
-                firebaseCollectionKey: "addadvice_per_user_limiter",
-                maxCallsPerPeriod: conf.calls,
+                name: "addadvice_per_user_limiter",
+                maxCalls: conf.calls,
                 periodSeconds: conf.periodS,
             },
-            this.db,
+            this.realtimeDb,
         );
     }
 
     private constructPerPhoneNumberLimiter() {
         const conf = Config.addAdvice.limits.perPhone;
-        return new FirebaseFunctionsRateLimiter(
+        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
             {
-                firebaseCollectionKey: "addadvice_per_phone_limiter",
-                maxCallsPerPeriod: conf.calls,
+                name: "addadvice_per_phone_limiter",
+                maxCalls: conf.calls,
                 periodSeconds: conf.periodS,
             },
-            this.db,
+            this.realtimeDb,
         );
     }
 
@@ -98,7 +100,7 @@ export class AddAdviceFunction {
 
     private async obtainUniqueId(): Promise<string> {
         return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) =>
-            AdvicesManager.adviceExists(id, this.db as any),
+            AdvicesManager.adviceExists(id, this.firestore as any),
         );
     }
 
@@ -111,6 +113,6 @@ export class AddAdviceFunction {
     }
 
     private async addAdvice(advice: Advice) {
-        await AdvicesManager.addAdvice(advice, this.db as any);
+        await AdvicesManager.addAdvice(advice, this.firestore as any);
     }
 }
