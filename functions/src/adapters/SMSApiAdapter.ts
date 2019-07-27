@@ -39,7 +39,7 @@ export class SMSApiAdapter {
         const builder = this.smsApi.message
             .sms()
             .normalize()
-            .from(Config.sms.fromName)
+            .from(this.from)
             .to(phoneNumber)
             .message(message);
 
