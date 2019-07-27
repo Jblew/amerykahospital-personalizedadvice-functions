@@ -1,24 +1,23 @@
 // tslint:disable max-classes-per-file
 import * as functions from "firebase-functions";
+import ow from "ow";
 import * as smsapi from "smsapi";
 import ChainedError from "typescript-chained-error";
 
-import { Config } from "../Config";
 import { Log } from "../Log";
 
 export class SMSApiAdapter {
     private smsApi: smsapi;
     private test: boolean;
+    private from: string;
 
-    public constructor(props: { test?: boolean }) {
+    public constructor(props: { test?: boolean; from: string }) {
         this.test = props.test || false;
-        const smsapiToken = this.obtainToken();
+        this.from = props.from;
+        ow(this.test, "SMSApiAdapter.props.test", ow.boolean);
+        ow(this.from, "SMSApiAdapter.props.from", ow.string);
 
-        this.smsApi = new smsapi({
-            oauth: {
-                accessToken: smsapiToken,
-            },
-        });
+        this.smsApi = this.constructApi();
     }
 
     public async sendMessage(phoneNumber: string, message: string): Promise<string> {
@@ -52,6 +51,17 @@ export class SMSApiAdapter {
         if ("error" in result) {
             throw new SMSApiAdapter.SMSApiError("Could not send sms: " + result.message);
         } else return `Sent ${result.count} messages`;
+    }
+
+    private constructApi() {
+        const smsapiToken = this.obtainToken();
+        ow(smsapiToken, "SMSApiAdapter smsapiToken", ow.string);
+
+        return new smsapi({
+            oauth: {
+                accessToken: smsapiToken,
+            },
+        });
     }
 
     private obtainToken(): string {
