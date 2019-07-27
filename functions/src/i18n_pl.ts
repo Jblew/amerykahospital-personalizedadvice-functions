@@ -2,6 +2,6 @@
 
 export const i18n_pl = {
     adviceSMSText:
-        `$medicalProfessionalName utwrzyl dla Ciebie porade medyczna. ` +
-        `Kliknij aby zainstalowac aplikacje i otworzyc porade: $link`,
+        `Tu Szpital w Ameryce. $medicalProfessionalName napisal dla Ciebie porade. ` /*** */ +
+        `Otworz ja w aplikacji: $link`,
 };
