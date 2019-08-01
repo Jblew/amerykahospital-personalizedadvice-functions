@@ -1,50 +1,41 @@
 {
-  // Example:
-  //
-  // "indexes": [
-  //   {
-  //     "collectionGroup": "widgets",
-  //     "queryScope": "COLLECTION",
-  //     "fields": [
-  //       { "fieldPath": "foo", "arrayConfig": "CONTAINS" },
-  //       { "fieldPath": "bar", "mode": "DESCENDING" }
-  //     ]
-  //   },
-  //
-  //  "fieldOverrides": [
-  //    {
-  //      "collectionGroup": "widgets",
-  //      "fieldPath": "baz",
-  //      "indexes": [
-  //        { "order": "ASCENDING", "queryScope": "COLLECTION" }
-  //      ]
-  //    },
-  //   ]
-  // ]
-  "indexes": [{
-    "collectionId": "ahpaa_advices",
-    "fields": [{
-      "fieldPath": "uid",
-      "mode": "ASCENDING"
-    }, {
-      "fieldPath": "timestamp",
-      "mode": "DESCENDING"
-    }]
-  }, {
-    "collectionId": "ahpaa_advices",
-    "fields": [{
-      "fieldPath": "medicalprofessionalName",
-      "mode": "ASCENDING"
-    }, {
-      "fieldPath": "patientName",
-      "mode": "ASCENDING"
-    }, {
-      "fieldPath": "parentPhoneNumber",
-      "mode": "ASCENDING"
-    }, {
-      "fieldPath": "timestamp",
-      "mode": "DESCENDING"
-    }]
-  }],
+  "indexes": [
+    {
+      "collectionGroup": "ahpaa_advices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "medicalprofessionalName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "patientName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "parentPhoneNumber",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ahpaa_advices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
