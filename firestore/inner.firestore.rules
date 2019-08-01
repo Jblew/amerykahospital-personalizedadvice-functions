@@ -3,7 +3,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function userIsMedicalProfessional() {
-      return request.auth != null && exists(/databases/$(database)/documents/ahpaa_medicalprofessional_uids/$(request.auth.uid));
+      return request.auth != null && exists(/databases/$(database)/documents/ahpaa_medicalprofessional_uids/$(request.auth.uid)) || callerHasRole("medicalprofessional");
     }
 
     function adviceIsPendingAndUserIsLoggedIn() {
