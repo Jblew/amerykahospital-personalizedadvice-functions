@@ -1,35 +1,30 @@
-rules_version = '2';
 
-service cloud.firestore {
-  match /databases/{database}/documents {
-    function userIsMedicalProfessional() {
-      return request.auth != null && exists(/databases/$(database)/documents/ahpaa_medicalprofessional_uids/$(request.auth.uid)) || callerHasRole("medicalprofessional");
-    }
+function userIsMedicalProfessional() {
+  return request.auth != null && exists(/databases/$(database)/documents/ahpaa_medicalprofessional_uids/$(request.auth.uid));
+}
 
-    function adviceIsPendingAndUserIsLoggedIn() {
-      return request.auth != null && !('uid' in resource.data.keys());
-    }
+function adviceIsPendingAndUserIsLoggedIn() {
+  return request.auth != null && !('uid' in resource.data.keys());
+}
 
-    function adviceBelongsToUser() {
-      return request.auth != null && ('uid' in resource.data.keys()) && resource.data.uid == request.auth.uid;
-    }
+function adviceBelongsToUser() {
+  return request.auth != null && ('uid' in resource.data.keys()) && resource.data.uid == request.auth.uid;
+}
 
-    match /ahpaa_advices/{adviceId} {
-      allow get: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn() || adviceBelongsToUser();
-      allow list: if userIsMedicalProfessional() || adviceBelongsToUser();
-      allow create: if userIsMedicalProfessional();
-      allow update: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn();
-    }
+match /ahpaa_advices/{adviceId} {
+  allow get: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn() || adviceBelongsToUser() || (isAuthenticated() && callerHasRole("medicalprofessional"));
+  allow list: if userIsMedicalProfessional() || adviceBelongsToUser();
+  allow create: if userIsMedicalProfessional();
+  allow update: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn();
+}
 
-    match /ahpaa_medicalprofessional_uids/{mpUid} {
-      allow read;
-      allow write: if false;
-    }
+match /ahpaa_medicalprofessional_uids/{mpUid} {
+  allow read;
+  allow write: if false;
+}
 
-    // demo
-    match /ahpaa_advices_demo/{adviceId} {
-      allow read;
-      allow write: if false;
-    }
-  }
+// demo
+match /ahpaa_advices_demo/{adviceId} {
+  allow read;
+  allow write: if false;
 }

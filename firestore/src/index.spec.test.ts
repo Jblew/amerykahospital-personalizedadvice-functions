@@ -239,8 +239,4 @@ describe("Firebase rules", () => {
             await expect(clientDoc(collName, "doc").set({ da: "ta2" })).to.eventually.be.rejectedWith("false");
         });
     });
-
-    describe("Collection " + FirestoreCollections.SENT_CODES_COLLECTION_KEY, () => {
-        /* */
-    });
 });
