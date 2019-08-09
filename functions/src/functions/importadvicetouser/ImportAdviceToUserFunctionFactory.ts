@@ -2,21 +2,26 @@ import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahosp
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
+import { inject, injectable } from "inversify";
 
 import { Config } from "../../Config";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
+import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
+import TYPES from "../../TYPES";
 
-export class ImportAdviceToUserFunction {
-    private firestore: FirebaseFirestore.Firestore;
-    private realtimeDb: admin.database.Database;
+@injectable()
+export class ImportAdviceToUserFunctionFactory {
+    @inject(TYPES.Firestore)
+    private firestore!: admin.firestore.Firestore;
+
+    @inject(TYPES.AuthHelper)
+    private authHelper!: AuthHelper;
+
     private perUserLimiter: FirebaseFunctionsRateLimiter;
 
-    public constructor(firestore: FirebaseFirestore.Firestore, realtimeDb: admin.database.Database) {
-        this.firestore = firestore;
-        this.realtimeDb = realtimeDb;
-
-        this.perUserLimiter = this.constructPerUserLimiter();
+    public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
+        this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.importAdviceToUser.limits.perUser);
     }
 
     public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
@@ -41,13 +46,13 @@ export class ImportAdviceToUserFunction {
             advice.uid = uid;
             await this.updateAdvice(advice);
 
-            return { advice };
+            return { advice, log: "" };
         });
     }
 
     private async doChecks(context: functions.https.CallableContext) {
-        await AuthHelper.assertAuthenticated(context);
-        await AuthHelper.assertUserIsMedicalProfessional(context, this.firestore);
+        await this.authHelper.assertAuthenticated(context);
+        await this.authHelper.assertUserIsMedicalProfessional(context);
         await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
     }
 
@@ -71,17 +76,5 @@ export class ImportAdviceToUserFunction {
 
     private async updateAdvice(advice: Advice) {
         await AdvicesManager.addAdvice(advice, this.firestore as any);
-    }
-
-    private constructPerUserLimiter() {
-        const conf = Config.importAdviceToUser.limits.perUser;
-        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
-            {
-                name: "importadvicetouser_per_user_limiter",
-                maxCalls: conf.calls,
-                periodSeconds: conf.periodS,
-            },
-            this.realtimeDb,
-        );
     }
 }

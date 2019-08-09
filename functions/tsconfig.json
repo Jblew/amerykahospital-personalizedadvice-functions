@@ -12,6 +12,8 @@
     "outDir": "lib",
     "target": "es6",
     "baseUrl": "src/",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "*": [
         "node_modules/*",

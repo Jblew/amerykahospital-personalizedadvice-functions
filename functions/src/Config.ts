@@ -5,32 +5,37 @@ export const Config = {
     addAdvice: {
         limits: {
             perUser: {
-                calls: 3,
-                periodS: 60,
+                name: "addadvice_peruser_lim",
+                maxCalls: 3,
+                periodSeconds: 60,
             },
             perPhone: {
-                calls: 4,
-                periodS: 40 * 60,
+                name: "addadvice_perphone_lim",
+                maxCalls: 4,
+                periodSeconds: 40 * 60,
             },
         },
     },
     sendSMS: {
         limits: {
             perUser: {
-                calls: 4,
-                periodS: 60,
+                name: "sendsms_peruser_lim",
+                maxCalls: 4,
+                periodSeconds: 60,
             },
             perPhone: {
-                calls: 4,
-                periodS: 40 * 60,
+                name: "sendsms_perphone_lim",
+                maxCalls: 4,
+                periodSeconds: 40 * 60,
             },
         },
     },
     importAdviceToUser: {
         limits: {
             perUser: {
-                calls: 50,
-                periodS: 30 * 60,
+                name: "importadvice_peruser_lim",
+                maxCalls: 50,
+                periodSeconds: 30 * 60,
             },
         },
     },

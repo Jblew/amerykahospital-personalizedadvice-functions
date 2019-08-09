@@ -7,24 +7,29 @@ import {
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
+import { inject, injectable } from "inversify";
 
 import { Config } from "../../Config";
 import { AlmostUniqueShortIdGenerator } from "../../helpers/AlmostUniqueShortIdGenerator";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
+import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
+import TYPES from "../../TYPES";
 
-export class AddAdviceFunction {
-    private firestore: FirebaseFirestore.Firestore;
-    private realtimeDb: admin.database.Database;
+@injectable()
+export class AddAdviceFunctionFactory {
+    @inject(TYPES.Firestore)
+    private firestore!: admin.firestore.Firestore;
+
+    @inject(TYPES.AuthHelper)
+    private authHelper!: AuthHelper;
+
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
 
-    public constructor(firestore: FirebaseFirestore.Firestore, realtimeDb: admin.database.Database) {
-        this.firestore = firestore;
-        this.realtimeDb = realtimeDb;
-
-        this.perUserLimiter = this.constructPerUserLimiter();
-        this.perPhoneNumberLimiter = this.constructPerPhoneNumberLimiter();
+    public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
+        this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.addAdvice.limits.perUser);
+        this.perPhoneNumberLimiter = rateLimiterFactory.createRateLimiter(Config.addAdvice.limits.perPhone);
     }
 
     public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
@@ -52,8 +57,8 @@ export class AddAdviceFunction {
     }
 
     private async doChecks(data: PendingAdvice, context: functions.https.CallableContext) {
-        await AuthHelper.assertAuthenticated(context);
-        await AuthHelper.assertUserIsMedicalProfessional(context, this.firestore);
+        await this.authHelper.assertAuthenticated(context);
+        await this.authHelper.assertUserIsMedicalProfessional(context);
         await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
 
         if (!data.parentPhoneNumber) throw new Error("Missing phone number");
@@ -66,30 +71,6 @@ export class AddAdviceFunction {
         const advice = this.pendingAdviceToAdvice(pendingAdvice, id);
         await this.addAdvice(advice);
         return id;
-    }
-
-    private constructPerUserLimiter() {
-        const conf = Config.addAdvice.limits.perUser;
-        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
-            {
-                name: "addadvice_per_user_limiter",
-                maxCalls: conf.calls,
-                periodSeconds: conf.periodS,
-            },
-            this.realtimeDb,
-        );
-    }
-
-    private constructPerPhoneNumberLimiter() {
-        const conf = Config.addAdvice.limits.perPhone;
-        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
-            {
-                name: "addadvice_per_phone_limiter",
-                maxCalls: conf.calls,
-                periodSeconds: conf.periodS,
-            },
-            this.realtimeDb,
-        );
     }
 
     private dataToPendingAdvice(data: any): PendingAdvice {

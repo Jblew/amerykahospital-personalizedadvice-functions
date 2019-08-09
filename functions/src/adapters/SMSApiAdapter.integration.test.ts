@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file no-console */
-import { expect, use as chaiUse } from "chai";
+import { use as chaiUse } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as _ from "lodash";
 import "mocha";

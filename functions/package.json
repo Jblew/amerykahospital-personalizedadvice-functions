@@ -2,7 +2,7 @@
   "name": "amerykahospital-personalizedadvice-serverless-functions",
   "scripts": {
     "lint": "tslint --project tsconfig.json",
-    "build": "tsc",
+    "build": "rm -rf lib && tsc",
     "serve": "npm run build && firebase serve --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -11,20 +11,23 @@
     "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register",
     "test": "npm run do_test",
     "do_verify": "find src -name '*.integration.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register",
-    "verify": "firebase emulators:exec --token=\"$FIREBASE_EMULATOR_TOKEN\" \"npm run do_verify\"",
-    "lint-fix": "tslint --fix -c tslint.json -p tsconfig.json"
+    "verify": "firebase emulators:exec --only firestore --token=\"$FIREBASE_EMULATOR_TOKEN\" \"npm run do_verify\"",
+    "lint-fix": "tslint --fix -c tslint.json -p tsconfig.lint.json"
   },
   "engines": {
     "node": "8"
   },
   "main": "lib/index.js",
   "dependencies": {
-    "amerykahospital-personalizedadvice-core": "^6.4.0",
+    "amerykahospital-personalizedadvice-core": "^6.7.0",
     "axios": "^0.19.0",
     "firebase-admin": "^8.0.0",
     "firebase-functions": "^3.0.0",
     "firebase-functions-rate-limiter": "^3.1.0",
+    "firestore-roles": "^2.2.0",
+    "inversify": "^5.0.1",
     "ow": "^0.13.2",
+    "reflect-metadata": "^0.1.13",
     "smsapi": "^1.7.0",
     "typescript-chained-error": "^1.2.0",
     "universe-log": "^1.4.5"

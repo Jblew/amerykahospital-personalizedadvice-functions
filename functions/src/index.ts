@@ -1,25 +1,21 @@
 import { FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
-import * as admin from "firebase-admin";
-import * as functions from "firebase-functions";
+import "reflect-metadata";
 
-import { AddAdviceFunction } from "./functions/addadvice/AddAdviceFunction";
-import { ImportAdviceToUserFunction } from "./functions/importadvicetouser/ImportAdviceToUserFunction";
-import { SendSMSFunction } from "./functions/sendsms/SendSMSFunction";
+import containerFactory from "./inversify.config";
 import { Log } from "./Log";
+import TYPES, * as t from "./TYPES";
 
 Log.log().initialize();
 
-//
-admin.initializeApp(functions.config().firebase);
-const firestore = admin.firestore();
-const realtimeDb = admin.database();
+const container = containerFactory();
+exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = container
+    .get<t.AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory)
+    .getFunction();
 
-//
-const addAdviceFunctionFactory = new AddAdviceFunction(firestore, realtimeDb);
-exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = addAdviceFunctionFactory.getFunction();
+exports[FirebaseFunctionDefinitions.SendSMS.NAME] = container
+    .get<t.SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory)
+    .getFunction();
 
-const sendSMSFunctionFactory = new SendSMSFunction(firestore, realtimeDb);
-exports[FirebaseFunctionDefinitions.SendSMS.NAME] = sendSMSFunctionFactory.getFunction();
-
-const importAdviceToUserFunctionFactory = new ImportAdviceToUserFunction(firestore, realtimeDb);
-exports[FirebaseFunctionDefinitions.ImportAdviceToUser.NAME] = importAdviceToUserFunctionFactory.getFunction();
+exports[FirebaseFunctionDefinitions.ImportAdviceToUser.NAME] = container
+    .get<t.ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
+    .getFunction();

@@ -2,27 +2,32 @@ import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahosp
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
+import { inject, injectable } from "inversify";
 
 import { Config } from "../../Config";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 import { Log } from "../../Log";
+import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
+import TYPES from "../../TYPES";
 
 import { AdviceDeepLinkGenerator } from "./AdviceDeepLinkGenerator";
 import { SMSMessageSender } from "./SMSMessageSender";
 
-export class SendSMSFunction {
-    private firestore: FirebaseFirestore.Firestore;
-    private realtimeDb: admin.database.Database;
+@injectable()
+export class SendSMSFunctionFactory {
+    @inject(TYPES.Firestore)
+    private firestore!: admin.firestore.Firestore;
+
+    @inject(TYPES.AuthHelper)
+    private authHelper!: AuthHelper;
+
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
 
-    public constructor(firestore: FirebaseFirestore.Firestore, realtimeDb: admin.database.Database) {
-        this.firestore = firestore;
-        this.realtimeDb = realtimeDb;
-
-        this.perUserLimiter = this.constructPerUserLimiter();
-        this.perPhoneNumberLimiter = this.constructPerPhoneNumberLimiter();
+    public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
+        this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perUser);
+        this.perPhoneNumberLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perPhone);
     }
 
     public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
@@ -54,8 +59,8 @@ export class SendSMSFunction {
     }
 
     private async doChecks(context: functions.https.CallableContext) {
-        await AuthHelper.assertAuthenticated(context);
-        await AuthHelper.assertUserIsMedicalProfessional(context, this.firestore);
+        await this.authHelper.assertAuthenticated(context);
+        await this.authHelper.assertUserIsMedicalProfessional(context);
         await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
     }
 
@@ -85,29 +90,5 @@ export class SendSMSFunction {
 
     private async limitSMSApiCalls(phoneNumber: string) {
         await this.perPhoneNumberLimiter.rejectOnQuotaExceeded("p_" + phoneNumber);
-    }
-
-    private constructPerUserLimiter() {
-        const conf = Config.sendSMS.limits.perUser;
-        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
-            {
-                name: "sendsms_per_user_limiter",
-                maxCalls: conf.calls,
-                periodSeconds: conf.periodS,
-            },
-            this.realtimeDb,
-        );
-    }
-
-    private constructPerPhoneNumberLimiter() {
-        const conf = Config.sendSMS.limits.perPhone;
-        return FirebaseFunctionsRateLimiter.withRealtimeDbBackend(
-            {
-                name: "sendsms_per_phone_limiter",
-                maxCalls: conf.calls,
-                periodSeconds: conf.periodS,
-            },
-            this.realtimeDb,
-        );
     }
 }
