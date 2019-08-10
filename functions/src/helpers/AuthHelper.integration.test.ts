@@ -1,5 +1,6 @@
 /* tslint:disable no-unused-expression no-console */
 import * as firebase from "@firebase/testing";
+import { RoleKey } from "amerykahospital-personalizedadvice-core";
 import { expect, use as chaiUse } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as functions from "firebase-functions";
@@ -9,13 +10,12 @@ import "mocha";
 import "reflect-metadata";
 import * as uuid from "uuid/v4";
 
+import { registerUserAndGrantRole } from "../_test/common_mocks";
 import firebaseTestAppFactory from "../_test/FirebaseTestAppFactory";
 import baseContainerFactory from "../inversify.config";
 import TYPES from "../TYPES";
 
 import { AuthHelper } from "./AuthHelper";
-import { RoleKey } from "amerykahospital-personalizedadvice-core";
-import { registerUserAndGrantRole } from "../_test/common_mocks";
 
 chaiUse(chaiAsPromised);
 
