@@ -19,7 +19,7 @@ script:
     - npm run --prefix=./firestore gen-rules
     - npm run --prefix=./firestore test
     - npm run --prefix=./functions test
-#   - npm run --prefix=./functions verify
+    - npm run --prefix=./functions verify
 
 deploy:
     provider: firebase
