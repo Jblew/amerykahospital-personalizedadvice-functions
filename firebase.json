@@ -13,6 +13,8 @@
   "emulators": {
     "firestore": {
       "port": "8081"
-    }
-  }
+    },
+    "database": {},
+  },
+  "database": {}
 }

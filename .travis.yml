@@ -14,6 +14,7 @@ install:
     - npm install --prefix=./firestore
     - npm install --prefix=./functions
     - firebase setup:emulators:firestore
+    - firebase setup:emulators:database
 
 script:
     - npm run --prefix=./firestore gen-rules

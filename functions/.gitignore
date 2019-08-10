@@ -9,3 +9,4 @@ node_modules/
 lib/
 
 /firestore-debug.log
+/database-debug.log
