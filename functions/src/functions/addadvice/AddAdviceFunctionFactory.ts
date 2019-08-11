@@ -1,6 +1,6 @@
 import {
     Advice,
-    AdvicesManager,
+    AdviceManager,
     FirebaseFunctionDefinitions,
     PendingAdvice,
 } from "amerykahospital-personalizedadvice-core";
@@ -18,11 +18,11 @@ import TYPES from "../../TYPES";
 
 @injectable()
 export class AddAdviceFunctionFactory {
-    @inject(TYPES.Firestore)
-    private firestore!: admin.firestore.Firestore;
-
     @inject(TYPES.AuthHelper)
     private authHelper!: AuthHelper;
+
+    @inject(TYPES.AdviceManager)
+    private adviceManager!: AdviceManager;
 
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
@@ -79,9 +79,7 @@ export class AddAdviceFunctionFactory {
     }
 
     private async obtainUniqueId(): Promise<string> {
-        return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) =>
-            AdvicesManager.adviceExists(id, this.firestore as any),
-        );
+        return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) => this.adviceManager.adviceExists(id));
     }
 
     private pendingAdviceToAdvice(pendingAdvice: PendingAdvice, id: string): Advice {
@@ -93,6 +91,6 @@ export class AddAdviceFunctionFactory {
     }
 
     private async addAdvice(advice: Advice) {
-        await AdvicesManager.addAdvice(advice, this.firestore as any);
+        await this.adviceManager.addAdvice(advice);
     }
 }

@@ -10,6 +10,7 @@ export const TYPES = {
     FirestoreRoles: Symbol("FirestoreRoles"),
     DynamicLinksAdapter: Symbol("DynamicLinksAdapter"),
     SMSApiAdapter: Symbol("SMSApiAdapter"),
+    AdviceManager: Symbol("AdviceManager"),
 };
 
 export default TYPES;

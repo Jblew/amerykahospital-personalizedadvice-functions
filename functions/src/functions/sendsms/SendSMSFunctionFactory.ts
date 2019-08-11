@@ -1,4 +1,4 @@
-import { Advice, AdvicesManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import { Advice, AdviceManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
@@ -20,18 +20,21 @@ export class SendSMSFunctionFactory {
     private log = Log.tag("SendSMSFunctionFactory");
     @inject(TYPES.AuthHelper) private authHelper!: AuthHelper;
     @inject(TYPES.DynamicLinksAdapter) private dynamicLinksAdapter!: DynamicLinksAdapter;
-    @inject(TYPES.Firestore) private firestore!: admin.firestore.Firestore;
+    @inject(TYPES.AdviceManager) private adviceManager!: AdviceManager;
 
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
     private adviceDeepLinkGenerator: AdviceDeepLinkGenerator;
     private smsMessageSender: SMSMessageSender;
 
-    public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
+    public constructor(
+        @inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory,
+        @inject(TYPES.Firestore) firestore: admin.firestore.Firestore,
+    ) {
         this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perUser);
         this.perPhoneNumberLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perPhone);
         this.adviceDeepLinkGenerator = new AdviceDeepLinkGenerator(this.dynamicLinksAdapter);
-        this.smsMessageSender = new SMSMessageSender(this.firestore);
+        this.smsMessageSender = new SMSMessageSender(firestore);
     }
 
     public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
@@ -74,7 +77,7 @@ export class SendSMSFunctionFactory {
     }
 
     private async getAdvice(adviceId: string): Promise<Advice> {
-        const advice = await AdvicesManager.getAdvice(adviceId, this.firestore as any);
+        const advice = await this.adviceManager.getAdvice(adviceId);
         if (advice) {
             return advice;
         } else {

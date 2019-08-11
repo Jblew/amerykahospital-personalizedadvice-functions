@@ -1,14 +1,13 @@
 /* tslint:disable no-unused-expression no-console */
 import {
     Advice,
-    AdvicesManager,
+    AdviceManager,
     FirebaseFunctionDefinitions,
     PendingAdvice,
     RoleKey,
 } from "amerykahospital-personalizedadvice-core";
 import { expect, use as chaiUse } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
-import * as admin from "firebase-admin";
 import * as _ from "lodash";
 import "mocha";
 import "reflect-metadata";
@@ -24,6 +23,7 @@ chaiUse(chaiAsPromised);
 describe("AddAdviceFunction", function() {
     const env = new IntegrationTestsEnvironment();
     let functionHandler: FirebaseFunctionDefinitions.AddAdvice.Function;
+    let adviceManager: AdviceManager;
 
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
@@ -31,6 +31,8 @@ describe("AddAdviceFunction", function() {
             .getContainer()
             .get<AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory)
             .getFunctionHandler();
+
+        adviceManager = env.getContainer().get<AdviceManager>(TYPES.AdviceManager);
     });
     afterEach(async () => await env.cleanupEach());
 
@@ -96,8 +98,7 @@ describe("AddAdviceFunction", function() {
                 roles: env.getContainer().get(TYPES.FirestoreRoles),
             });
             const { adviceId } = await functionHandler(pendingAdvice, context);
-            const firestore = env.getContainer().get<admin.firestore.Firestore>(TYPES.Firestore);
-            addedAdvice = (await AdvicesManager.getAdvice(adviceId, firestore as any))!;
+            addedAdvice = (await adviceManager.getAdvice(adviceId))!;
         });
 
         it("All fields are added correctly", () => {

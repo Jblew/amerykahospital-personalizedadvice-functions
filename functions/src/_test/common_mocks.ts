@@ -1,4 +1,4 @@
-import { PendingAdvice } from "amerykahospital-personalizedadvice-core";
+import { Advice, PendingAdvice } from "amerykahospital-personalizedadvice-core";
 import * as functions from "firebase-functions";
 import FirestoreRoles, { AccountRecord } from "firestore-roles";
 import * as uuid from "uuid/v4";
@@ -47,6 +47,18 @@ export function getSamplePendingAdvice() {
         medicalprofessionalName: "medicalprofessional-" + uuid(),
         parentPhoneNumber: "123123123",
         advice: "advice-" + uuid(),
+    };
+    return advice;
+}
+
+export function getSampleAdvice() {
+    const advice: Advice = {
+        id: uuid(),
+        patientName: "patient-" + uuid(),
+        medicalprofessionalName: "medicalprofessional-" + uuid(),
+        parentPhoneNumber: "123123123",
+        advice: "advice-" + uuid(),
+        timestamp: Math.floor(Date.now() / 1000),
     };
     return advice;
 }
