@@ -10,14 +10,18 @@ import { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFacto
 import { AuthHelper } from "./helpers/AuthHelper";
 import { AuthHelperImpl } from "./helpers/AuthHelperImpl";
 import firebaseAppFactory from "./providers/FirebaseAppFactory";
-import firestoreRolesProvider from "./providers/FirestoreRolesFactory";
+import firestoreRolesFactory from "./providers/FirestoreRolesFactory";
 import { RateLimiterFactory } from "./providers/RateLimiterFactory";
+import { RateLimiterFactoryImpl } from "./providers/RateLimiterFactoryImpl";
 import smsApiAdapterFactory from "./providers/SMSApiAdapterFactory";
 import TYPES from "./TYPES";
 
 function containerFactory() {
     const container = new Container();
-    container.bind<admin.app.App>(TYPES.FirebaseAdminApp).toDynamicValue(firebaseAppFactory);
+    container
+        .bind<admin.app.App>(TYPES.FirebaseAdminApp)
+        .toDynamicValue(firebaseAppFactory)
+        .inSingletonScope();
     container
         .bind<admin.firestore.Firestore>(TYPES.Firestore)
         .toDynamicValue(context => context.container.get<admin.app.App>(TYPES.FirebaseAdminApp).firestore())
@@ -36,7 +40,7 @@ function containerFactory() {
         .inSingletonScope();
         .inSingletonScope();
     container.bind<AuthHelper>(TYPES.AuthHelper).to(AuthHelperImpl);
-    container.bind<RateLimiterFactory>(TYPES.RateLimiterFactory).to(RateLimiterFactory);
+    container.bind<RateLimiterFactory>(TYPES.RateLimiterFactory).to(RateLimiterFactoryImpl);
     container.bind<AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory).to(AddAdviceFunctionFactory);
     container
         .bind<ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
