@@ -23,14 +23,14 @@
     "axios": "^0.19.0",
     "firebase-admin": "^8.0.0",
     "firebase-functions": "^3.0.0",
-    "firebase-functions-rate-limiter": "^3.1.0",
+    "firebase-functions-rate-limiter": "^3.2.1",
     "firestore-roles": "^2.2.0",
     "inversify": "^5.0.1",
     "ow": "^0.13.2",
     "reflect-metadata": "^0.1.13",
     "smsapi": "^1.7.0",
     "typescript-chained-error": "^1.2.0",
-    "universe-log": "^1.4.5"
+    "universe-log": "^5.1.0"
   },
   "devDependencies": {
     "@firebase/testing": "^0.11.10",
