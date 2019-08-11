@@ -48,7 +48,6 @@ export class AddAdviceFunctionFactory {
         return FunctionErrorWrapper.wrap(async () => {
             await this.doChecks(data, context);
             const adviceId = await this.doAddAdvice(data, context);
-
             return {
                 log: "Advice added",
                 adviceId,
