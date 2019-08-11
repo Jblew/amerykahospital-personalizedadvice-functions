@@ -6,6 +6,7 @@ import { Log } from "../../Log";
 
 export class AdviceDeepLinkGenerator {
     public static async obtainDeepLink(adviceId: string): Promise<string> {
+    private log = Log.tag("AdviceDeepLinkGenerator");
         const inAppLink = `${FIREBASE_CONFIG.websiteBaseUrl}advice/${adviceId}`;
         const link = DynamicLinksAdapter.buildLongDynamicLink(inAppLink);
         return await DynamicLinksAdapter.obtainShortUnguessableDynamicLinkFromFirebase(link);
@@ -16,7 +17,7 @@ export class AdviceDeepLinkGenerator {
         const msg = i18n_pl.adviceSMSText
             .replace("$medicalProfessionalName", advice.medicalprofessionalName)
             .replace("$link", link);
-        Log.log().info("Sending message " + msg);
+        this.log.info("Sending message " + msg);
         return msg;
     }
 }

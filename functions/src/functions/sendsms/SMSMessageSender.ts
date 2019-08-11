@@ -12,13 +12,14 @@ export class SMSMessageSender {
         message: string,
         db: FirebaseFirestore.Firestore,
     ): Promise<string> {
+    private log = Log.tag("SMSMessageSender");
         let result: string = "";
         let error: string = "";
         try {
             const adapter = new SMSApiAdapter({ from: Config.sms.fromName });
             result = await adapter.sendMessage(phoneNumber, message);
         } catch (error) {
-            Log.log().info("SMSMessageSender sending error", error);
+            this.log.info("SMSMessageSender sending error", error);
 
             error = error + "";
         }
@@ -46,7 +47,7 @@ export class SMSMessageSender {
         try {
             await db.collection(collectionName).add(resultRecord);
         } catch (error) {
-            Log.log().warn("SMSMessageSender: could not record sms sending status", error, { record: resultRecord });
+            this.log.warn("SMSMessageSender: could not record sms sending status", error, { record: resultRecord });
         }
     }
 }

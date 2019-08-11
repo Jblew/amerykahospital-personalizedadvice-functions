@@ -21,6 +21,7 @@ export class SendSMSFunctionFactory {
 
     @inject(TYPES.AuthHelper)
     private authHelper!: AuthHelper;
+    private log = Log.tag("SendSMSFunctionFactory");
 
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
@@ -44,7 +45,7 @@ export class SendSMSFunctionFactory {
         context: functions.https.CallableContext,
     ): Promise<FirebaseFunctionDefinitions.SendSMS.Result> {
         return FunctionErrorWrapper.wrap(async () => {
-            Log.log().info("Begin SendSMSFunction.functionHandler with data", data);
+            this.log.info("Begin SendSMSFunction.functionHandler with data", data);
             await this.doChecks(context);
             const adviceId = this.getAdviceIdFromData(data);
             const advice = await this.getAdvice(adviceId);
@@ -84,8 +85,8 @@ export class SendSMSFunctionFactory {
 
     private async sendSMS(phoneNumber: string, message: string): Promise<string> {
         await this.limitSMSApiCalls(phoneNumber);
-        Log.log().info("Calling SMSMessageSender.sendSMS");
         return await SMSMessageSender.sendSMS(phoneNumber, message, this.firestore);
+        this.log.info("Calling SMSMessageSender.sendSMS");
     }
 
     private async limitSMSApiCalls(phoneNumber: string) {

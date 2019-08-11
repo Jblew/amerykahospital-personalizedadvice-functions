@@ -1,6 +1,11 @@
+// tslint:disable member-ordering
 import * as functions from "firebase-functions";
 
+import { Log } from "../Log";
+
 export class FunctionErrorWrapper {
+    private static log = Log.tag("FunctionErrorWrapper");
+
     public static async wrap<T>(fn: () => Promise<T>): Promise<T> {
         try {
             const res: T = await fn();
@@ -9,7 +14,7 @@ export class FunctionErrorWrapper {
             if ("code" in error) throw error;
             else {
                 // tslint:disable no-console
-                console.error(error);
+                FunctionErrorWrapper.log.error(error);
                 throw new functions.https.HttpsError("unknown", "" + error);
             }
         }

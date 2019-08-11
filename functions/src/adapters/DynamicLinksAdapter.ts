@@ -6,6 +6,7 @@ import { AxiosErrorTransformer } from "../util/AxiosErrorTransformer";
 
 export class DynamicLinksAdapter {
     public static buildLongDynamicLink(inAppLink: string): string {
+    private log = Log.tag("DynamicLinksAdapter");
         const url =
             FIREBASE_CONFIG.dynamicLinksBaseUrl + `?link=${inAppLink}` + `&apn=${FIREBASE_CONFIG.androidPackageName}`;
         return url;
@@ -33,7 +34,7 @@ export class DynamicLinksAdapter {
         if (resp.data && resp.data.shortLink) {
             return resp.data.shortLink;
         } else {
-            Log.log().error("Malformed response from firebase dynamic links", resp.data);
+            this.log.error("Malformed response from firebase dynamic links", resp.data);
             throw new Error("Malformed response from firebase dynamic links");
         }
     }
