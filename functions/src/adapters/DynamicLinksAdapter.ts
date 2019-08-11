@@ -1,18 +1,21 @@
 import { FIREBASE_CONFIG } from "amerykahospital-personalizedadvice-core";
 import Axios from "axios";
+import { injectable } from "inversify";
 
 import { Log } from "../Log";
 import { AxiosErrorTransformer } from "../util/AxiosErrorTransformer";
 
+@injectable()
 export class DynamicLinksAdapter {
-    public static buildLongDynamicLink(inAppLink: string): string {
     private log = Log.tag("DynamicLinksAdapter");
+
+    public buildLongDynamicLink(inAppLink: string): string {
         const url =
             FIREBASE_CONFIG.dynamicLinksBaseUrl + `?link=${inAppLink}` + `&apn=${FIREBASE_CONFIG.androidPackageName}`;
         return url;
     }
 
-    public static async obtainShortUnguessableDynamicLinkFromFirebase(longDynamicLink: string): Promise<string> {
+    public async obtainShortUnguessableDynamicLinkFromFirebase(longDynamicLink: string): Promise<string> {
         const resp = await AxiosErrorTransformer.wrap(
             async () =>
                 await Axios({
@@ -39,5 +42,3 @@ export class DynamicLinksAdapter {
         }
     }
 }
-
-export namespace DynamicLinksAdapter {}

@@ -3,6 +3,7 @@ import { FirestoreRoles } from "firestore-roles";
 import { Container } from "inversify";
 import "reflect-metadata";
 
+import { DynamicLinksAdapter } from "./adapters/DynamicLinksAdapter";
 import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
 import { AddAdviceFunctionFactory } from "./functions/addadvice/AddAdviceFunctionFactory";
 import { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
@@ -38,6 +39,9 @@ function containerFactory() {
         .bind<SMSApiAdapter>(TYPES.SMSApiAdapter)
         .toDynamicValue(smsApiAdapterFactory)
         .inSingletonScope();
+    container
+        .bind<DynamicLinksAdapter>(TYPES.DynamicLinksAdapter)
+        .to(DynamicLinksAdapter)
         .inSingletonScope();
     container.bind<AuthHelper>(TYPES.AuthHelper).to(AuthHelperImpl);
     container.bind<RateLimiterFactory>(TYPES.RateLimiterFactory).to(RateLimiterFactoryImpl);
