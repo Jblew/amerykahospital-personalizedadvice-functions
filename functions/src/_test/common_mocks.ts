@@ -3,13 +3,15 @@ import * as functions from "firebase-functions";
 import FirestoreRoles, { AccountRecord } from "firestore-roles";
 import * as uuid from "uuid/v4";
 
-export function constructAuthorizationContext(authorized: boolean): functions.https.CallableContext {
+export async function constructAuthorizationContext(
+    props: { authorized: false } | { authorized: true; role?: string; roles?: FirestoreRoles },
+): Promise<functions.https.CallableContext> {
+    if (!props.authorized) return { auth: {} } as functions.https.CallableContext;
+    const account = await registerUserAndGrantRole({ uid: `uid_${uuid()}`, role: props.role, roles: props.roles });
     return {
-        auth: authorized
-            ? {
-                  uid: `uid_${uuid()}`,
-              }
-            : {},
+        auth: {
+            uid: account.uid,
+        },
     } as functions.https.CallableContext;
 }
 
@@ -24,9 +26,19 @@ export function getSampleAccount(uid: string): AccountRecord {
     };
 }
 
-export async function registerUserAndGrantRole(props: { uid: string; role: string; roles: FirestoreRoles }) {
-    await props.roles.registerUser(getSampleAccount(props.uid));
-    await props.roles.enableRole(props.uid, props.role);
+export async function registerUserAndGrantRole(props: {
+    uid: string;
+    role?: string;
+    roles?: FirestoreRoles;
+}): Promise<AccountRecord> {
+    const account = getSampleAccount(props.uid);
+    if (props.roles) {
+        await props.roles!.registerUser(account);
+    }
+    if (props.role) {
+        await props.roles!.enableRole(props.uid, props.role!);
+    }
+    return account;
 }
 
 export function getSamplePendingAdvice() {
