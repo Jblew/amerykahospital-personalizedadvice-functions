@@ -1,12 +1,15 @@
 // tslint:disable max-classes-per-file
 import * as functions from "firebase-functions";
+import { injectable } from "inversify";
 import ow from "ow";
 import * as smsapi from "smsapi";
 import ChainedError from "typescript-chained-error";
 
 import { Log } from "../Log";
 
+@injectable()
 export class SMSApiAdapter {
+    private log = Log.tag("SMSApiAdapter");
     private smsApi: smsapi;
     private test: boolean;
     private from: string;
@@ -21,14 +24,14 @@ export class SMSApiAdapter {
     }
 
     public async sendMessage(phoneNumber: string, message: string): Promise<string> {
-        Log.log().info("Begin SMSApi send", { phoneNumber, message });
+        this.log.info("Begin SMSApi send", { phoneNumber, message });
 
         let result: smsapi.BatchSendResult;
         try {
             result = await this.buildQuery(phoneNumber, message).execute();
-            Log.log().info("SMSApi response", result);
+            this.log.info("SMSApi response", result);
         } catch (error) {
-            Log.log().info("SMSApi error", error);
+            this.log.info("SMSApi error", error);
 
             throw new SMSApiAdapter.SMSApiError("Could not send sms: " + JSON.stringify(error), error);
         }

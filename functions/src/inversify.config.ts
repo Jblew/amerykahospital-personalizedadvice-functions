@@ -1,7 +1,9 @@
 import * as admin from "firebase-admin";
 import { FirestoreRoles } from "firestore-roles";
 import { Container } from "inversify";
+import "reflect-metadata";
 
+import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
 import { AddAdviceFunctionFactory } from "./functions/addadvice/AddAdviceFunctionFactory";
 import { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
 import { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
@@ -10,6 +12,7 @@ import { AuthHelperImpl } from "./helpers/AuthHelperImpl";
 import firebaseAppFactory from "./providers/FirebaseAppFactory";
 import firestoreRolesProvider from "./providers/FirestoreRolesFactory";
 import { RateLimiterFactory } from "./providers/RateLimiterFactory";
+import smsApiAdapterFactory from "./providers/SMSApiAdapterFactory";
 import TYPES from "./TYPES";
 
 function containerFactory() {
@@ -25,7 +28,12 @@ function containerFactory() {
         .inSingletonScope();
     container
         .bind<FirestoreRoles>(TYPES.FirestoreRoles)
-        .toDynamicValue(firestoreRolesProvider)
+        .toDynamicValue(firestoreRolesFactory)
+        .inSingletonScope();
+    container
+        .bind<SMSApiAdapter>(TYPES.SMSApiAdapter)
+        .toDynamicValue(smsApiAdapterFactory)
+        .inSingletonScope();
         .inSingletonScope();
     container.bind<AuthHelper>(TYPES.AuthHelper).to(AuthHelperImpl);
     container.bind<RateLimiterFactory>(TYPES.RateLimiterFactory).to(RateLimiterFactory);

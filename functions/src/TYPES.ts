@@ -8,6 +8,7 @@ export const TYPES = {
     ImportAdviceToUserFunctionFactory: Symbol("ImportAdviceToUserFunctionFactory"),
     SendSMSFunctionFactory: Symbol("SendSMSFunctionFactory"),
     FirestoreRoles: Symbol("FirestoreRoles"),
+    SMSApiAdapter: Symbol("SMSApiAdapter"),
 };
 
 export default TYPES;

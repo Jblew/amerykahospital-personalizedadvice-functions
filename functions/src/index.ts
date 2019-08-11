@@ -1,5 +1,4 @@
 import { FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
-import "reflect-metadata";
 
 import containerFactory from "./inversify.config";
 import { Log } from "./Log";
