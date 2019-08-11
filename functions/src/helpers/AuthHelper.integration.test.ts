@@ -23,13 +23,13 @@ describe("AuthHelper", function() {
     describe("assertAuthenticated", () => {
         it("does not throw if user is authenticated", async () => {
             const authHelper: AuthHelper = env.getContainer().get(TYPES.AuthHelper);
-            const context = constructAuthorizationContext(true);
+            const context = await constructAuthorizationContext({ authorized: true });
             await expect(authHelper.assertAuthenticated(context)).to.eventually.be.fulfilled;
         });
 
         it("throws if user is not authenticated", async () => {
             const authHelper: AuthHelper = env.getContainer().get(TYPES.AuthHelper);
-            const context = constructAuthorizationContext(false);
+            const context = await constructAuthorizationContext({ authorized: false });
             await expect(authHelper.assertAuthenticated(context)).to.eventually.be.rejectedWith(/Please authenticate/);
         });
     });
@@ -37,7 +37,7 @@ describe("AuthHelper", function() {
     describe("assertUserIsMedicalProfessional", () => {
         it("throws if user is not authenticated", async () => {
             const authHelper: AuthHelper = env.getContainer().get(TYPES.AuthHelper);
-            const context = constructAuthorizationContext(false);
+            const context = await constructAuthorizationContext({ authorized: false });
             await expect(authHelper.assertUserIsMedicalProfessional(context)).to.eventually.be.rejectedWith(
                 /You must be a medical professional/,
             );
@@ -45,7 +45,7 @@ describe("AuthHelper", function() {
 
         it("throws if user is authenticated but not a medical professional", async () => {
             const authHelper: AuthHelper = env.getContainer().get(TYPES.AuthHelper);
-            const context = constructAuthorizationContext(true);
+            const context = await constructAuthorizationContext({ authorized: true });
             await expect(authHelper.assertUserIsMedicalProfessional(context)).to.eventually.be.rejectedWith(
                 /You must be a medical professional/,
             );
@@ -53,7 +53,7 @@ describe("AuthHelper", function() {
 
         it("does not throw if user is authenticated and a medical professional", async () => {
             const authHelper: AuthHelper = env.getContainer().get(TYPES.AuthHelper);
-            const context = constructAuthorizationContext(true);
+            const context = await constructAuthorizationContext({ authorized: true });
             await registerUserAndGrantRole({
                 uid: context.auth!.uid,
                 role: RoleKey.medicalprofessional,
