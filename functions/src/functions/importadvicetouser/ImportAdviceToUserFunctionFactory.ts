@@ -51,7 +51,6 @@ export class ImportAdviceToUserFunctionFactory {
 
     private async doChecks(context: functions.https.CallableContext) {
         await this.authHelper.assertAuthenticated(context);
-        await this.authHelper.assertUserIsMedicalProfessional(context);
         await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
     }
 
