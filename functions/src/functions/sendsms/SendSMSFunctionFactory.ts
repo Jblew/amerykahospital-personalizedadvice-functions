@@ -4,6 +4,7 @@ import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
 
+import { DynamicLinksAdapter } from "../../adapters/DynamicLinksAdapter";
 import { Config } from "../../Config";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
@@ -16,19 +17,21 @@ import { SMSMessageSender } from "./SMSMessageSender";
 
 @injectable()
 export class SendSMSFunctionFactory {
-    @inject(TYPES.Firestore)
-    private firestore!: admin.firestore.Firestore;
-
-    @inject(TYPES.AuthHelper)
-    private authHelper!: AuthHelper;
     private log = Log.tag("SendSMSFunctionFactory");
+    @inject(TYPES.AuthHelper) private authHelper!: AuthHelper;
+    @inject(TYPES.DynamicLinksAdapter) private dynamicLinksAdapter!: DynamicLinksAdapter;
+    @inject(TYPES.Firestore) private firestore!: admin.firestore.Firestore;
 
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
+    private adviceDeepLinkGenerator: AdviceDeepLinkGenerator;
+    private smsMessageSender: SMSMessageSender;
 
     public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
         this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perUser);
         this.perPhoneNumberLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perPhone);
+        this.adviceDeepLinkGenerator = new AdviceDeepLinkGenerator(this.dynamicLinksAdapter);
+        this.smsMessageSender = new SMSMessageSender(this.firestore);
     }
 
     public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
@@ -80,13 +83,13 @@ export class SendSMSFunctionFactory {
     }
 
     private async generateMessage(advice: Advice): Promise<string> {
-        return await AdviceDeepLinkGenerator.generateDeepLinkMessage(advice);
+        return await this.adviceDeepLinkGenerator.generateDeepLinkMessage(advice);
     }
 
     private async sendSMS(phoneNumber: string, message: string): Promise<string> {
         await this.limitSMSApiCalls(phoneNumber);
-        return await SMSMessageSender.sendSMS(phoneNumber, message, this.firestore);
         this.log.info("Calling SMSMessageSender.sendSMS");
+        return await this.smsMessageSender.sendSMS(phoneNumber, message);
     }
 
     private async limitSMSApiCalls(phoneNumber: string) {

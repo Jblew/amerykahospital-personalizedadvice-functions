@@ -7,12 +7,14 @@ import { Config } from "../../Config";
 import { Log } from "../../Log";
 
 export class SMSMessageSender {
-    public static async sendSMS(
-        phoneNumber: string,
-        message: string,
-        db: FirebaseFirestore.Firestore,
-    ): Promise<string> {
     private log = Log.tag("SMSMessageSender");
+    private db: admin.firestore.Firestore;
+
+    public constructor(db: admin.firestore.Firestore) {
+        this.db = db;
+    }
+
+    public async sendSMS(phoneNumber: string, message: string): Promise<string> {
         let result: string = "";
         let error: string = "";
         try {
@@ -23,29 +25,21 @@ export class SMSMessageSender {
 
             error = error + "";
         }
-        await SMSMessageSender.recordSMSSendinStatus({ phoneNumber, message, result, error }, db);
+        await this.recordSMSSendinStatus({ phoneNumber, message, result, error });
 
         if (error) throw new Error(error);
 
         return result || "";
     }
 
-    private static async recordSMSSendinStatus(
-        params: {
-            phoneNumber: string;
-            message: string;
-            result: any;
-            error?: string;
-        },
-        db: FirebaseFirestore.Firestore,
-    ) {
+    private async recordSMSSendinStatus(params: { phoneNumber: string; message: string; result: any; error?: string }) {
         const collectionName = FirestoreCollections.SENT_SMS_MESSAGES_COLLECTION_KEY;
         const resultRecord = {
             ...params,
             timestamp: admin.firestore.Timestamp.now().seconds,
         };
         try {
-            await db.collection(collectionName).add(resultRecord);
+            await this.db.collection(collectionName).add(resultRecord);
         } catch (error) {
             this.log.warn("SMSMessageSender: could not record sms sending status", error, { record: resultRecord });
         }

@@ -5,15 +5,21 @@ import { i18n_pl } from "../../i18n_pl";
 import { Log } from "../../Log";
 
 export class AdviceDeepLinkGenerator {
-    public static async obtainDeepLink(adviceId: string): Promise<string> {
     private log = Log.tag("AdviceDeepLinkGenerator");
-        const inAppLink = `${FIREBASE_CONFIG.websiteBaseUrl}advice/${adviceId}`;
-        const link = DynamicLinksAdapter.buildLongDynamicLink(inAppLink);
-        return await DynamicLinksAdapter.obtainShortUnguessableDynamicLinkFromFirebase(link);
+    private dynamicLinksAdapter: DynamicLinksAdapter;
+
+    public constructor(dynamicLinksAdapter: DynamicLinksAdapter) {
+        this.dynamicLinksAdapter = dynamicLinksAdapter;
     }
 
-    public static async generateDeepLinkMessage(advice: Advice): Promise<string> {
-        const link = await AdviceDeepLinkGenerator.obtainDeepLink(advice.id);
+    public async obtainDeepLink(adviceId: string): Promise<string> {
+        const inAppLink = `${FIREBASE_CONFIG.websiteBaseUrl}advice/${adviceId}`;
+        const link = this.dynamicLinksAdapter.buildLongDynamicLink(inAppLink);
+        return await this.dynamicLinksAdapter.obtainShortUnguessableDynamicLinkFromFirebase(link);
+    }
+
+    public async generateDeepLinkMessage(advice: Advice): Promise<string> {
+        const link = await this.obtainDeepLink(advice.id);
         const msg = i18n_pl.adviceSMSText
             .replace("$medicalProfessionalName", advice.medicalprofessionalName)
             .replace("$link", link);
