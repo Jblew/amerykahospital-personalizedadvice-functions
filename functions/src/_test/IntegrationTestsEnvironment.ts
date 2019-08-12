@@ -6,6 +6,8 @@ import {
 } from "firebase-functions-rate-limiter";
 import { Container, injectable } from "inversify";
 
+import { SMSApiAdapter } from "../adapters/SMSApiAdapter";
+import { SMSApiAdapterMock } from "../adapters/SMSApiAdapterMock.test";
 import baseContainerFactory from "../inversify.config";
 import { RateLimiterFactory } from "../providers/RateLimiterFactory";
 import TYPES from "../TYPES";
@@ -42,6 +44,7 @@ export class IntegrationTestsEnvironment {
             .rebind<RateLimiterFactory>(TYPES.RateLimiterFactory)
             .to(MockRateLimiterFactory)
             .inSingletonScope();
+        container.rebind<SMSApiAdapter>(TYPES.SMSApiAdapter).toConstantValue(new SMSApiAdapterMock());
         return container;
     }
 }

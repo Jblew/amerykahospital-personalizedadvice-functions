@@ -1,17 +1,11 @@
+// tslint:disable no-console
 import { FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import "reflect-metadata";
 
+import { resolveAddAdvice, resolveImportAdviceToUser, resolveSendSMS } from "./index_resolver";
 import containerFactory from "./inversify.config";
-import TYPES, * as t from "./TYPES";
 
 const container = containerFactory();
-exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = container
-    .get<t.AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory)
-    .getFunction();
-
-exports[FirebaseFunctionDefinitions.SendSMS.NAME] = container
-    .get<t.SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory)
-    .getFunction();
-
-exports[FirebaseFunctionDefinitions.ImportAdviceToUser.NAME] = container
-    .get<t.ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
-    .getFunction();
+exports[FirebaseFunctionDefinitions.AddAdvice.NAME] = resolveAddAdvice(container);
+exports[FirebaseFunctionDefinitions.SendSMS.NAME] = resolveSendSMS(container);
+exports[FirebaseFunctionDefinitions.ImportAdviceToUser.NAME] = resolveImportAdviceToUser(container);
