@@ -1,12 +1,13 @@
 import * as firebase from "@firebase/testing";
-import { Advice, FirestoreCollections } from "amerykahospital-personalizedadvice-core";
-import * as uuid from "uuid/v4";
+import { Advice, RoleKey, RolesConfig } from "amerykahospital-personalizedadvice-core";
+import FirestoreRoles from "firestore-roles";
 import * as fs from "fs";
 import * as path from "path";
+import * as uuid from "uuid/v4";
 
 const firestoreRules = fs.readFileSync(path.resolve(__dirname, "../deploy.firestore.rules"), "utf8");
 
-export function mock(o: { clientAuth?: {} }) {
+export async function mock(o: { clientAuth?: {} }) {
     const projectId = "unit-testing-" + Date.now();
 
     const clientAppConfig: any = { projectId };
@@ -14,7 +15,7 @@ export function mock(o: { clientAuth?: {} }) {
     const clientApp = firebase.initializeTestApp(clientAppConfig);
     const clientFirestore = clientApp.firestore();
 
-    firebase.loadFirestoreRules({
+    await firebase.loadFirestoreRules({
         projectId,
         rules: firestoreRules,
     });
@@ -30,11 +31,10 @@ export function mock(o: { clientAuth?: {} }) {
         return clientFirestore.collection(collection).doc(doc);
     }
 
+    const adminRoles = new FirestoreRoles(RolesConfig, adminFirestore);
+
     async function markAsMedicalProfessional(uid: string) {
-        return adminFirestore
-            .collection(FirestoreCollections.MEDICALPROFESSIONAL_UIDS_COLLECTION)
-            .doc(uid)
-            .set({ mp: true });
+        return adminRoles.enableRole(uid, RoleKey.medicalprofessional);
     }
 
     return {
