@@ -27,6 +27,48 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "medicalprofessionalName",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ahpaa_advices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "patientName",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ahpaa_advices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "parentPhoneNumber",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ahpaa_advices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "uid",
           "order": "ASCENDING"
         },
