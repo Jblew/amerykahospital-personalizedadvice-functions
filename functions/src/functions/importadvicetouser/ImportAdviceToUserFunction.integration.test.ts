@@ -50,6 +50,18 @@ describe("ImportAdviceToUserFunction", function() {
             await expect(functionHandler({ adviceId: sampleAdvice.id }, context)).to.eventually.be.fulfilled;
         });
 
+        it("Sets advice uid to the calee's uid", async () => {
+            const context = await constructAuthorizationContext({ authorized: true });
+            const sampleAdvice = getSampleAdvice();
+            await adviceManager.addAdvice(sampleAdvice);
+
+            await functionHandler({ adviceId: sampleAdvice.id }, context);
+
+            const fetchedAdvice = await adviceManager.getAdvice(sampleAdvice.id);
+
+            expect(fetchedAdvice!.uid).to.be.equal(context.auth!.uid);
+        });
+
         it("Does not allow to import advice that is already imported", async () => {
             const context = await constructAuthorizationContext({ authorized: true });
             const sampleAdvice = getSampleAdvice();
