@@ -1,18 +1,12 @@
 /* tslint:disable no-unused-expression no-console */
 import { AdviceManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
-import { expect, use as chaiUse } from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import * as _ from "lodash";
-import "mocha";
-import "reflect-metadata";
 
 import { constructAuthorizationContext, getSampleAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
+import { _, expect } from "../../_test/test_environment";
 import TYPES from "../../TYPES";
 
 import { ImportAdviceToUserFunctionFactory } from "./ImportAdviceToUserFunctionFactory";
-
-chaiUse(chaiAsPromised);
 
 describe("ImportAdviceToUserFunction", function() {
     const env = new IntegrationTestsEnvironment();

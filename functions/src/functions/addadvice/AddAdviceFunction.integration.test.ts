@@ -6,19 +6,13 @@ import {
     PendingAdvice,
     RoleKey,
 } from "amerykahospital-personalizedadvice-core";
-import { expect, use as chaiUse } from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import * as _ from "lodash";
-import "mocha";
-import "reflect-metadata";
 
 import { constructAuthorizationContext, getSamplePendingAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
+import { _, expect } from "../../_test/test_environment";
 import TYPES from "../../TYPES";
 
 import { AddAdviceFunctionFactory } from "./AddAdviceFunctionFactory";
-
-chaiUse(chaiAsPromised);
 
 describe("AddAdviceFunction", function() {
     const env = new IntegrationTestsEnvironment();

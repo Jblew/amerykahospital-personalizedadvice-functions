@@ -1,13 +1,9 @@
 /* tslint:disable:max-classes-per-file no-console */
-import { expect, use as chaiUse } from "chai";
-import * as chaiAsPromised from "chai-as-promised";
 import * as functions from "firebase-functions";
-import * as _ from "lodash";
-import "mocha";
+
+import { _, expect } from "../_test/test_environment";
 
 import { FunctionErrorWrapper } from "./FunctionErrorWrapper";
-
-chaiUse(chaiAsPromised);
 
 describe("FunctionErrorWrapper", () => {
     describe("wrap", () => {

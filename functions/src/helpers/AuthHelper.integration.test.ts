@@ -1,18 +1,12 @@
 /* tslint:disable no-unused-expression no-console */
 import { RoleKey } from "amerykahospital-personalizedadvice-core";
-import { expect, use as chaiUse } from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import * as _ from "lodash";
-import "mocha";
-import "reflect-metadata";
 
 import { constructAuthorizationContext, registerUserAndGrantRole } from "../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../_test/IntegrationTestsEnvironment";
+import { _, expect } from "../_test/test_environment";
 import TYPES from "../TYPES";
 
 import { AuthHelper } from "./AuthHelper";
-
-chaiUse(chaiAsPromised);
 
 describe("AuthHelper", function() {
     const env = new IntegrationTestsEnvironment();
