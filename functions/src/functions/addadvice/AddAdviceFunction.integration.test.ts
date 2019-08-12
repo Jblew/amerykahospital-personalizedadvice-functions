@@ -15,6 +15,8 @@ import TYPES from "../../TYPES";
 import { AddAdviceFunctionFactory } from "./AddAdviceFunctionFactory";
 
 describe("AddAdviceFunction", function() {
+    this.timeout(4000);
+
     const env = new IntegrationTestsEnvironment();
     let functionHandler: FirebaseFunctionDefinitions.AddAdvice.Function;
     let adviceRepository: AdviceRepository;

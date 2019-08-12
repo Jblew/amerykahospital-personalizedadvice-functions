@@ -11,7 +11,9 @@ import { mock, sampleAdvice } from "./mock.test";
 
 chaiUse(chaiAsPromised);
 
-describe("Firebase rules", () => {
+describe("Firestore rules", function() {
+    this.timeout(4000);
+
     afterEach(async () => {
         try {
             await Promise.all(firebase.apps().map(app => app.delete()));

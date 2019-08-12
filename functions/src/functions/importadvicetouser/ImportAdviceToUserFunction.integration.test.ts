@@ -9,6 +9,8 @@ import TYPES from "../../TYPES";
 import { ImportAdviceToUserFunctionFactory } from "./ImportAdviceToUserFunctionFactory";
 
 describe("ImportAdviceToUserFunction", function() {
+    this.timeout(4000);
+
     const env = new IntegrationTestsEnvironment();
     let functionHandler: FirebaseFunctionDefinitions.ImportAdviceToUser.Function;
     let adviceRepository: AdviceRepository;
