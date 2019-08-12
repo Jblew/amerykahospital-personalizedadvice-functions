@@ -1,4 +1,4 @@
-import { AdviceManager } from "amerykahospital-personalizedadvice-core";
+import { AdviceRepository, SentSMSRepository } from "amerykahospital-personalizedadvice-core";
 import * as admin from "firebase-admin";
 import { FirestoreRoles } from "firestore-roles";
 import { Container } from "inversify";
@@ -11,7 +11,7 @@ import { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouse
 import { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
 import { AuthHelper } from "./helpers/AuthHelper";
 import { AuthHelperImpl } from "./helpers/AuthHelperImpl";
-import adviceManagerFactory from "./providers/AdviceManagerFactory";
+import adviceRepositoryFactory from "./providers/AdviceRepositoryFactory";
 import firebaseAppFactory from "./providers/FirebaseAppFactory";
 import firestoreRolesFactory from "./providers/FirestoreRolesFactory";
 import { RateLimiterFactory } from "./providers/RateLimiterFactory";
@@ -48,8 +48,9 @@ function containerFactory() {
     container.bind<AuthHelper>(TYPES.AuthHelper).to(AuthHelperImpl);
     container.bind<RateLimiterFactory>(TYPES.RateLimiterFactory).to(RateLimiterFactoryImpl);
     container
-        .bind<AdviceManager>(TYPES.AdviceManager)
-        .toDynamicValue(adviceManagerFactory)
+        .bind<AdviceRepository>(TYPES.AdviceRepository)
+        .toDynamicValue(adviceRepositoryFactory)
+        .inSingletonScope();
         .inSingletonScope();
     container.bind<AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory).to(AddAdviceFunctionFactory);
     container

@@ -1,7 +1,7 @@
 /* tslint:disable no-unused-expression no-console */
 import {
     Advice,
-    AdviceManager,
+    AdviceRepository,
     FirebaseFunctionDefinitions,
     PendingAdvice,
     RoleKey,
@@ -17,7 +17,7 @@ import { AddAdviceFunctionFactory } from "./AddAdviceFunctionFactory";
 describe("AddAdviceFunction", function() {
     const env = new IntegrationTestsEnvironment();
     let functionHandler: FirebaseFunctionDefinitions.AddAdvice.Function;
-    let adviceManager: AdviceManager;
+    let adviceRepository: AdviceRepository;
 
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
@@ -26,7 +26,7 @@ describe("AddAdviceFunction", function() {
             .get<AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory)
             .getFunctionHandler();
 
-        adviceManager = env.getContainer().get<AdviceManager>(TYPES.AdviceManager);
+        adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
     });
     afterEach(async () => await env.cleanupEach());
 
@@ -92,7 +92,7 @@ describe("AddAdviceFunction", function() {
                 roles: env.getContainer().get(TYPES.FirestoreRoles),
             });
             const { adviceId } = await functionHandler(pendingAdvice, context);
-            addedAdvice = (await adviceManager.getAdvice(adviceId))!;
+            addedAdvice = (await adviceRepository.getAdvice(adviceId))!;
         });
 
         it("All fields are added correctly", () => {

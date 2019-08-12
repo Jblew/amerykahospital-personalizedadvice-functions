@@ -1,4 +1,4 @@
-import { Advice, AdviceManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import { Advice, AdviceRepository, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
@@ -20,7 +20,7 @@ export class SendSMSFunctionFactory {
     private log = Log.tag("SendSMSFunctionFactory");
     @inject(TYPES.AuthHelper) private authHelper!: AuthHelper;
     @inject(TYPES.DynamicLinksAdapter) private dynamicLinksAdapter!: DynamicLinksAdapter;
-    @inject(TYPES.AdviceManager) private adviceManager!: AdviceManager;
+    @inject(TYPES.AdviceRepository) private adviceRepository!: AdviceRepository;
 
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
@@ -77,7 +77,7 @@ export class SendSMSFunctionFactory {
     }
 
     private async getAdvice(adviceId: string): Promise<Advice> {
-        const advice = await this.adviceManager.getAdvice(adviceId);
+        const advice = await this.adviceRepository.getAdvice(adviceId);
         if (advice) {
             return advice;
         } else {

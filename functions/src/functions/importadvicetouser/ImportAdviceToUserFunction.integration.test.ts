@@ -1,5 +1,5 @@
 /* tslint:disable no-unused-expression no-console */
-import { AdviceManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import { AdviceRepository, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
 
 import { constructAuthorizationContext, getSampleAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
@@ -11,7 +11,7 @@ import { ImportAdviceToUserFunctionFactory } from "./ImportAdviceToUserFunctionF
 describe("ImportAdviceToUserFunction", function() {
     const env = new IntegrationTestsEnvironment();
     let functionHandler: FirebaseFunctionDefinitions.ImportAdviceToUser.Function;
-    let adviceManager: AdviceManager;
+    let adviceRepository: AdviceRepository;
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
         functionHandler = env
@@ -19,7 +19,7 @@ describe("ImportAdviceToUserFunction", function() {
             .get<ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
             .getFunctionHandler();
 
-        adviceManager = env.getContainer().get<AdviceManager>(TYPES.AdviceManager);
+        adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
     });
     afterEach(async () => await env.cleanupEach());
 
@@ -27,7 +27,7 @@ describe("ImportAdviceToUserFunction", function() {
         it("throws if user is not authenticated", async () => {
             const context = await constructAuthorizationContext({ authorized: false });
             const sampleAdvice = getSampleAdvice();
-            await adviceManager.addAdvice(sampleAdvice);
+            await adviceRepository.addAdvice(sampleAdvice);
 
             await expect(functionHandler({ adviceId: sampleAdvice.id }, context)).to.eventually.be.rejectedWith(
                 /Please authenticate/,
@@ -39,7 +39,7 @@ describe("ImportAdviceToUserFunction", function() {
         it("Allows to import advice that is not imported yet", async () => {
             const context = await constructAuthorizationContext({ authorized: true });
             const sampleAdvice = getSampleAdvice();
-            await adviceManager.addAdvice(sampleAdvice);
+            await adviceRepository.addAdvice(sampleAdvice);
 
             await expect(functionHandler({ adviceId: sampleAdvice.id }, context)).to.eventually.be.fulfilled;
         });
@@ -47,11 +47,11 @@ describe("ImportAdviceToUserFunction", function() {
         it("Sets advice uid to the calee's uid", async () => {
             const context = await constructAuthorizationContext({ authorized: true });
             const sampleAdvice = getSampleAdvice();
-            await adviceManager.addAdvice(sampleAdvice);
+            await adviceRepository.addAdvice(sampleAdvice);
 
             await functionHandler({ adviceId: sampleAdvice.id }, context);
 
-            const fetchedAdvice = await adviceManager.getAdvice(sampleAdvice.id);
+            const fetchedAdvice = await adviceRepository.getAdvice(sampleAdvice.id);
 
             expect(fetchedAdvice!.uid).to.be.equal(context.auth!.uid);
         });
@@ -59,7 +59,7 @@ describe("ImportAdviceToUserFunction", function() {
         it("Does not allow to import advice that is already imported", async () => {
             const context = await constructAuthorizationContext({ authorized: true });
             const sampleAdvice = getSampleAdvice();
-            await adviceManager.addAdvice(sampleAdvice);
+            await adviceRepository.addAdvice(sampleAdvice);
 
             await functionHandler({ adviceId: sampleAdvice.id }, context);
 

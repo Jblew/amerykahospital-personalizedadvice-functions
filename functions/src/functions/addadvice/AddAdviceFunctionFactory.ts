@@ -1,6 +1,6 @@
 import {
     Advice,
-    AdviceManager,
+    AdviceRepository,
     FirebaseFunctionDefinitions,
     PendingAdvice,
 } from "amerykahospital-personalizedadvice-core";
@@ -21,8 +21,8 @@ export class AddAdviceFunctionFactory {
     @inject(TYPES.AuthHelper)
     private authHelper!: AuthHelper;
 
-    @inject(TYPES.AdviceManager)
-    private adviceManager!: AdviceManager;
+    @inject(TYPES.AdviceRepository)
+    private adviceRepository!: AdviceRepository;
 
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
@@ -79,7 +79,7 @@ export class AddAdviceFunctionFactory {
     }
 
     private async obtainUniqueId(): Promise<string> {
-        return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) => this.adviceManager.adviceExists(id));
+        return AlmostUniqueShortIdGenerator.obtainUniqueId((id: string) => this.adviceRepository.adviceExists(id));
     }
 
     private pendingAdviceToAdvice(pendingAdvice: PendingAdvice, id: string): Advice {
@@ -91,6 +91,6 @@ export class AddAdviceFunctionFactory {
     }
 
     private async addAdvice(advice: Advice) {
-        await this.adviceManager.addAdvice(advice);
+        await this.adviceRepository.addAdvice(advice);
     }
 }

@@ -1,4 +1,4 @@
-import { Advice, AdviceManager, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import { Advice, AdviceRepository, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
@@ -11,8 +11,8 @@ import TYPES from "../../TYPES";
 
 @injectable()
 export class ImportAdviceToUserFunctionFactory {
-    @inject(TYPES.AdviceManager)
-    private adviceManager!: AdviceManager;
+    @inject(TYPES.AdviceRepository)
+    private adviceRepository!: AdviceRepository;
 
     @inject(TYPES.AuthHelper)
     private authHelper!: AuthHelper;
@@ -60,7 +60,7 @@ export class ImportAdviceToUserFunctionFactory {
     }
 
     private async getAdvice(adviceId: string): Promise<Advice> {
-        const advice = await this.adviceManager.getAdvice(adviceId);
+        const advice = await this.adviceRepository.getAdvice(adviceId);
         if (advice) {
             return advice;
         } else {
@@ -73,6 +73,6 @@ export class ImportAdviceToUserFunctionFactory {
     }
 
     private async updateAdvice(advice: Advice) {
-        await this.adviceManager.addAdvice(advice);
+        await this.adviceRepository.addAdvice(advice);
     }
 }
