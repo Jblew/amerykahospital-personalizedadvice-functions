@@ -9,6 +9,7 @@ import TYPES from "../TYPES";
 import { AuthHelper } from "./AuthHelper";
 
 describe("AuthHelper", function() {
+    this.timeout(4000);
     const env = new IntegrationTestsEnvironment();
 
     beforeEach(async () => await env.prepareEach());
