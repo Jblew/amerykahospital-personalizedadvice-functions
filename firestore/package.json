@@ -7,13 +7,13 @@
         "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register",
         "test": "firebase emulators:exec --only firestore --token=\"test_token\" \"npm run do_test\"",
         "lint-fix": "tslint --fix -c tslint.json -p tsconfig.json",
-        "gen-rules": "npx firestore-roles generate node_modules/amerykahospital-personalizedadvice-core/dist/roles.config.js inner.firestore.rules deploy.firestore.rules"
+        "gen-rules": "npx firestore-roles generate node_modules/amerykahospital-personalizedadvice-core/dist/roles/roles.config.js inner.firestore.rules deploy.firestore.rules"
     },
     "engines": {
         "node": "8"
     },
     "dependencies": {
-        "amerykahospital-personalizedadvice-core": "^6.6.1"
+        "amerykahospital-personalizedadvice-core": "^11.0.0"
     },
     "devDependencies": {
         "@firebase/testing": "^0.11.10",
@@ -28,7 +28,7 @@
         "bluebird": "^3.5.5",
         "chai": "4.2.0",
         "chai-as-promised": "7.1.1",
-        "firestore-roles": "^2.1.0",
+        "firestore-roles": "^2.2.0",
         "husky": "^3.0.3",
         "jblew-tslint-config": "0.1.0",
         "lodash": "^4.17.15",

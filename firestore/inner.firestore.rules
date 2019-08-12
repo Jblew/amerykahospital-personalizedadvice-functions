@@ -1,6 +1,6 @@
 
 function userIsMedicalProfessional() {
-  return request.auth != null && exists(/databases/$(database)/documents/ahpaa_medicalprofessional_uids/$(request.auth.uid));
+  return isAuthenticated() && callerHasRole("medicalprofessional");
 }
 
 function adviceIsPendingAndUserIsLoggedIn() {
@@ -12,15 +12,10 @@ function adviceBelongsToUser() {
 }
 
 match /ahpaa_advices/{adviceId} {
-  allow get: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn() || adviceBelongsToUser() || (isAuthenticated() && callerHasRole("medicalprofessional"));
+  allow get: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn() || adviceBelongsToUser();
   allow list: if userIsMedicalProfessional() || adviceBelongsToUser();
   allow create: if userIsMedicalProfessional();
   allow update: if userIsMedicalProfessional() || adviceIsPendingAndUserIsLoggedIn();
-}
-
-match /ahpaa_medicalprofessional_uids/{mpUid} {
-  allow read;
-  allow write: if false;
 }
 
 // demo
