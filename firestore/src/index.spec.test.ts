@@ -11,15 +11,15 @@ import { mock, sampleAdvice } from "./mock.test";
 
 chaiUse(chaiAsPromised);
 
-afterEach(async () => {
-    try {
-        await Promise.all(firebase.apps().map(app => app.delete()));
-    } catch (error) {
-        console.warn("Warning: Error in firebase shutdown " + error);
-    }
-});
-
 describe("Firebase rules", () => {
+    afterEach(async () => {
+        try {
+            await Promise.all(firebase.apps().map(app => app.delete()));
+        } catch (error) {
+            console.warn("Warning: Error in firebase shutdown " + error);
+        }
+    });
+
     describe("Collection " + FirestoreCollections.ADVICES_COLLECTION_KEY, () => {
         const collName = FirestoreCollections.ADVICES_COLLECTION_KEY;
         describe("get", () => {

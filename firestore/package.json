@@ -5,7 +5,7 @@
         "build:lint": "tslint -c tslint.json -p tsconfig.lint.json",
         "build": "npm run check && npm run build:lint",
         "do_test": "find src -name '*.spec.test.ts' | TS_NODE_FILES=true TS_NODE_CACHE=false TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' xargs mocha -r ts-node/register --require source-map-support/register",
-        "test": "bash ./scripts/run-tests.sh",
+        "test": "firebase emulators:exec --only firestore --token=\"test_token\" \"npm run do_test\"",
         "lint-fix": "tslint --fix -c tslint.json -p tsconfig.json",
         "gen-rules": "npx firestore-roles generate node_modules/amerykahospital-personalizedadvice-core/dist/roles.config.js inner.firestore.rules deploy.firestore.rules"
     },

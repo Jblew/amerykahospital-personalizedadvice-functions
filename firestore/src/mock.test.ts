@@ -1,6 +1,10 @@
 import * as firebase from "@firebase/testing";
 import { Advice, FirestoreCollections } from "amerykahospital-personalizedadvice-core";
 import * as uuid from "uuid/v4";
+import * as fs from "fs";
+import * as path from "path";
+
+const firestoreRules = fs.readFileSync(path.resolve(__dirname, "../deploy.firestore.rules"), "utf8");
 
 export function mock(o: { clientAuth?: {} }) {
     const projectId = "unit-testing-" + Date.now();
@@ -9,6 +13,11 @@ export function mock(o: { clientAuth?: {} }) {
     if (o.clientAuth) clientAppConfig.auth = o.clientAuth;
     const clientApp = firebase.initializeTestApp(clientAppConfig);
     const clientFirestore = clientApp.firestore();
+
+    firebase.loadFirestoreRules({
+        projectId,
+        rules: firestoreRules,
+    });
 
     const adminApp = firebase.initializeAdminApp({ projectId });
     const adminFirestore = adminApp.firestore();
