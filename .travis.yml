@@ -23,8 +23,9 @@ script:
     - npm run --prefix=./functions verify
 
 deploy:
-    provider: firebase
-    skip_cleanup: true
-    on:
-        tags: false
-        branch: master
+    - provider: script
+      script: bash -c "npx firebase deploy --only firestore,functions"
+      skip_cleanup: true
+      on:
+          tags: false
+          branch: master
