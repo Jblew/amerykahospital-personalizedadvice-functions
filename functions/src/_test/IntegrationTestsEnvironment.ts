@@ -20,15 +20,7 @@ export class IntegrationTestsEnvironment {
     }
 
     public prepareEach() {
-        this.container = baseContainerFactory();
-        this.container
-            .rebind(TYPES.FirebaseAdminApp)
-            .toDynamicValue(firebaseTestAppFactory)
-            .inSingletonScope();
-        this.container
-            .rebind<RateLimiterFactory>(TYPES.RateLimiterFactory)
-            .to(MockRateLimiterFactory)
-            .inSingletonScope();
+        this.container = this.buildContainer();
     }
 
     public async cleanupEach() {
@@ -38,6 +30,19 @@ export class IntegrationTestsEnvironment {
             console.warn("Warning: Error in firebase shutdown " + error);
         }
         this.container = undefined;
+    }
+
+    private buildContainer() {
+        const container = baseContainerFactory();
+        container
+            .rebind(TYPES.FirebaseAdminApp)
+            .toDynamicValue(firebaseTestAppFactory)
+            .inSingletonScope();
+        container
+            .rebind<RateLimiterFactory>(TYPES.RateLimiterFactory)
+            .to(MockRateLimiterFactory)
+            .inSingletonScope();
+        return container;
     }
 }
 
