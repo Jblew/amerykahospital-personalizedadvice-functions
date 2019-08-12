@@ -6,18 +6,18 @@ import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnviron
 import { _, expect } from "../../_test/test_environment";
 import TYPES from "../../TYPES";
 
-import { ImportAdviceToUserFunctionFactory } from "./ImportAdviceToUserFunctionFactory";
+import { SendSMSFunctionFactory } from "./SendSMSFunctionFactory";
 
-describe("ImportAdviceToUserFunction", function() {
+describe("SendSMSFunction", function() {
     const env = new IntegrationTestsEnvironment();
-    let functionHandler: FirebaseFunctionDefinitions.ImportAdviceToUser.Function;
+    let functionHandler: FirebaseFunctionDefinitions.SendSMS.Function;
     let adviceRepository: AdviceRepository;
     let sampleAdvice: Advice;
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
         functionHandler = env
             .getContainer()
-            .get<ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
+            .get<SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory)
             .getFunctionHandler();
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);

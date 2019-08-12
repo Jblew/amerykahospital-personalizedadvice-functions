@@ -56,7 +56,7 @@ export function getSampleAdvice() {
         id: uuid(),
         patientName: "patient-" + uuid(),
         medicalprofessionalName: "medicalprofessional-" + uuid(),
-        parentPhoneNumber: "123123123",
+        parentPhoneNumber: (Math.floor(Math.random() * 10 ** 9) + "").padStart(9, "0"),
         advice: "advice-" + uuid(),
         timestamp: Math.floor(Date.now() / 1000),
     };
