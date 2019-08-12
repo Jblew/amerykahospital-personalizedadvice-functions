@@ -1,6 +1,7 @@
 import * as inversify from "inversify";
 
-import { SMSApiAdapter } from "../adapters/SMSApiAdapter";
+import { SMSApiAdapterImpl } from "../adapters/SMSApiAdapterImpl";
 import { Config } from "../Config";
 
-export default (context: inversify.interfaces.Context) => new SMSApiAdapter({ test: false, from: Config.sms.fromName });
+export default (context: inversify.interfaces.Context) =>
+    new SMSApiAdapterImpl({ test: false, from: Config.sms.fromName });
