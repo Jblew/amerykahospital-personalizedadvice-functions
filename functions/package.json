@@ -30,7 +30,7 @@
     "reflect-metadata": "^0.1.13",
     "smsapi": "^1.7.0",
     "typescript-chained-error": "^1.2.0",
-    "universe-log": "^5.1.0"
+    "universe-log": "^5.2.0"
   },
   "devDependencies": {
     "@firebase/testing": "^0.11.10",
