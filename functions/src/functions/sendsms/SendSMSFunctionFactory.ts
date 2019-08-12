@@ -1,10 +1,9 @@
 import { Advice, AdviceRepository, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
-import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
 
-import { DynamicLinksAdapter } from "../../adapters/DynamicLinksAdapter";
+import { AdviceSMSSender } from "../../advicesms/AdviceSMSSender";
 import { Config } from "../../Config";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
@@ -12,29 +11,18 @@ import { Log } from "../../Log";
 import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
 import TYPES from "../../TYPES";
 
-import { AdviceDeepLinkGenerator } from "./AdviceDeepLinkGenerator";
-import { SMSMessageSender } from "./SMSMessageSender";
-
 @injectable()
 export class SendSMSFunctionFactory {
     private log = Log.tag("SendSMSFunctionFactory");
     @inject(TYPES.AuthHelper) private authHelper!: AuthHelper;
-    @inject(TYPES.DynamicLinksAdapter) private dynamicLinksAdapter!: DynamicLinksAdapter;
     @inject(TYPES.AdviceRepository) private adviceRepository!: AdviceRepository;
-
+    @inject(TYPES.AdviceSMSSender) private adviceSMSSender!: AdviceSMSSender;
     private perUserLimiter: FirebaseFunctionsRateLimiter;
     private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
-    private adviceDeepLinkGenerator: AdviceDeepLinkGenerator;
-    private smsMessageSender: SMSMessageSender;
 
-    public constructor(
-        @inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory,
-        @inject(TYPES.Firestore) firestore: admin.firestore.Firestore,
-    ) {
+    public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
         this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perUser);
         this.perPhoneNumberLimiter = rateLimiterFactory.createRateLimiter(Config.sendSMS.limits.perPhone);
-        this.adviceDeepLinkGenerator = new AdviceDeepLinkGenerator(this.dynamicLinksAdapter);
-        this.smsMessageSender = new SMSMessageSender(firestore);
     }
 
     public getFunction(builder?: functions.FunctionBuilder): functions.Runnable<any> {
@@ -55,12 +43,11 @@ export class SendSMSFunctionFactory {
             await this.doChecks(context);
             const adviceId = this.getAdviceIdFromData(data);
             const advice = await this.getAdvice(adviceId);
-            const message = await this.generateMessage(advice);
-            const smsResult = await this.sendSMS(advice.parentPhoneNumber, message);
+            const { message, sentSMSId } = await this.sendSMS(advice);
 
             return {
-                message: "Sent " + message,
-                smsResult,
+                message,
+                sentSMSId,
             };
         });
     }
@@ -85,14 +72,9 @@ export class SendSMSFunctionFactory {
         }
     }
 
-    private async generateMessage(advice: Advice): Promise<string> {
-        return await this.adviceDeepLinkGenerator.generateDeepLinkMessage(advice);
-    }
-
-    private async sendSMS(phoneNumber: string, message: string): Promise<string> {
-        await this.limitSMSApiCalls(phoneNumber);
-        this.log.info("Calling SMSMessageSender.sendSMS");
-        return await this.smsMessageSender.sendSMS(phoneNumber, message);
+    private async sendSMS(advice: Advice): Promise<{ sentSMSId: string; message: string }> {
+        await this.limitSMSApiCalls(advice.parentPhoneNumber);
+        return await this.adviceSMSSender.sendAdviceLinkSMS(advice);
     }
 
     private async limitSMSApiCalls(phoneNumber: string) {

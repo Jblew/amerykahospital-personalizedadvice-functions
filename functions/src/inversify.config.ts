@@ -6,6 +6,7 @@ import "reflect-metadata";
 
 import { DynamicLinksAdapter } from "./adapters/DynamicLinksAdapter";
 import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
+import { AdviceSMSSender } from "./advicesms/AdviceSMSSender";
 import { AddAdviceFunctionFactory } from "./functions/addadvice/AddAdviceFunctionFactory";
 import { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
 import { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
@@ -16,6 +17,7 @@ import firebaseAppFactory from "./providers/FirebaseAppFactory";
 import firestoreRolesFactory from "./providers/FirestoreRolesFactory";
 import { RateLimiterFactory } from "./providers/RateLimiterFactory";
 import { RateLimiterFactoryImpl } from "./providers/RateLimiterFactoryImpl";
+import sentSMSRepositoryFactory from "./providers/SentSMSRepositoryFactory";
 import smsApiAdapterFactory from "./providers/SMSApiAdapterFactory";
 import TYPES from "./TYPES";
 
@@ -42,6 +44,10 @@ function containerFactory() {
         .toDynamicValue(smsApiAdapterFactory)
         .inSingletonScope();
     container
+        .bind<AdviceSMSSender>(TYPES.AdviceSMSSender)
+        .to(AdviceSMSSender)
+        .inSingletonScope();
+    container
         .bind<DynamicLinksAdapter>(TYPES.DynamicLinksAdapter)
         .to(DynamicLinksAdapter)
         .inSingletonScope();
@@ -51,6 +57,9 @@ function containerFactory() {
         .bind<AdviceRepository>(TYPES.AdviceRepository)
         .toDynamicValue(adviceRepositoryFactory)
         .inSingletonScope();
+    container
+        .bind<SentSMSRepository>(TYPES.SentSMSRepository)
+        .toDynamicValue(sentSMSRepositoryFactory)
         .inSingletonScope();
     container.bind<AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory).to(AddAdviceFunctionFactory);
     container

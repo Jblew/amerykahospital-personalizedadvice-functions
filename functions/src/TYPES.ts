@@ -11,6 +11,8 @@ export const TYPES = {
     DynamicLinksAdapter: Symbol("DynamicLinksAdapter"),
     SMSApiAdapter: Symbol("SMSApiAdapter"),
     AdviceRepository: Symbol("AdviceRepository"),
+    SentSMSRepository: Symbol("SentSMSRepository"),
+    AdviceSMSSender: Symbol("AdviceSMSSender"),
 };
 
 export default TYPES;
