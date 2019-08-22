@@ -14,7 +14,7 @@ import { MissingPhoneNumberError } from "../../error/MissingPhoneNumberError";
 import { PerPhoneLimitExceededError } from "../../error/PerPhoneLimitExceededError";
 import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
 import { AlmostUniqueShortIdGenerator } from "../../helpers/AlmostUniqueShortIdGenerator";
-import { AuthHelper } from "../../helpers/AuthHelper";
+import { AuthHelper } from "../../helpers/auth/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
 import TYPES from "../../TYPES";
