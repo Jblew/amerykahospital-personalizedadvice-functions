@@ -1,12 +1,13 @@
 import * as functions from "firebase-functions";
 import { LocalizedError, LocalizedErrorFactory } from "localized-error";
 
-export type LocalizedFirebaseFunctionsError<TYPE extends string> = LocalizedError & {
-    details: {
-        type: TYPE;
-        advanced: string;
+export type LocalizedFirebaseFunctionsError<TYPE extends string> = Error &
+    LocalizedError & {
+        details: {
+            type: TYPE;
+            advanced: string;
+        };
     };
-};
 
 export namespace LocalizedFirebaseFunctionsError {
     export function make<TYPE extends string>(params: {

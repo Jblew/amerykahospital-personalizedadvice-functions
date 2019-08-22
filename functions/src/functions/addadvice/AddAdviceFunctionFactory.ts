@@ -10,11 +10,16 @@ import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
 
 import { Config } from "../../Config";
+import { MissingPhoneNumberError } from "../../error/MissingPhoneNumberError";
+import { PerPhoneLimitExceededError } from "../../error/PerPhoneLimitExceededError";
+import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
 import { AlmostUniqueShortIdGenerator } from "../../helpers/AlmostUniqueShortIdGenerator";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
 import TYPES from "../../TYPES";
+
+import { CannotSpecifyIdOnPendingAdviceError } from "./error/CannotSpecifyIdOnPendingAdviceError";
 
 @injectable()
 export class AddAdviceFunctionFactory {
@@ -58,10 +63,22 @@ export class AddAdviceFunctionFactory {
     private async doChecks(data: PendingAdvice, context: functions.https.CallableContext) {
         await this.authHelper.assertAuthenticated(context);
         await this.authHelper.assertUserIsMedicalProfessional(context);
-        await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
+        await this.limitPerUser((context.auth as { uid: string }).uid);
 
-        if (!data.parentPhoneNumber) throw new Error("Missing phone number");
-        await this.perPhoneNumberLimiter.rejectOnQuotaExceeded("p_" + data.parentPhoneNumber);
+        if (!data.parentPhoneNumber) throw MissingPhoneNumberError.make();
+        await this.limitPerPhone(data.parentPhoneNumber);
+    }
+
+    private async limitPerUser(uid: string) {
+        await this.perUserLimiter.rejectOnQuotaExceededOrRecordUsage(`u_${uid}`, config =>
+            PerUserLimitExceededError.make(config),
+        );
+    }
+
+    private async limitPerPhone(phone: string) {
+        await this.perUserLimiter.rejectOnQuotaExceededOrRecordUsage(`p_${phone}`, config =>
+            PerPhoneLimitExceededError.make(config),
+        );
     }
 
     private async doAddAdvice(data: PendingAdvice, context: functions.https.CallableContext): Promise<string> {
@@ -73,7 +90,7 @@ export class AddAdviceFunctionFactory {
     }
 
     private dataToPendingAdvice(data: any): PendingAdvice {
-        if (data.id) throw new Error("You cannot specify id of an advice before it is added");
+        if (data.id) throw CannotSpecifyIdOnPendingAdviceError.make();
         PendingAdvice.validate(data);
         return data as PendingAdvice;
     }
