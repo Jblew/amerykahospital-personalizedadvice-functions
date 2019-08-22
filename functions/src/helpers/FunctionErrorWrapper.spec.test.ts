@@ -15,7 +15,7 @@ describe("FunctionErrorWrapper", () => {
             }
 
             await expect(FunctionErrorWrapper.wrap(async () => throwingFn()))
-                .to.eventually.be.rejectedWith("Error")
+                .to.eventually.be.rejectedWith(/Unexpected system error occured/)
                 .that.haveOwnProperty("code");
         });
 
