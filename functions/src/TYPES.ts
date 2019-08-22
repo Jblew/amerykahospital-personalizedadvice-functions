@@ -17,7 +17,7 @@ export const TYPES = {
 
 export default TYPES;
 
-export { AuthHelper } from "./helpers/AuthHelper";
+export { AuthHelper } from "./helpers/auth/AuthHelper";
 export { RateLimiterFactory } from "./providers/RateLimiterFactory";
 export { AddAdviceFunctionFactory } from "./functions/addadvice/AddAdviceFunctionFactory";
 export { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
