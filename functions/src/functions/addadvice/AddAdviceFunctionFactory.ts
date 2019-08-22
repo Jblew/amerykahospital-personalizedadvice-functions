@@ -11,7 +11,6 @@ import { inject, injectable } from "inversify";
 
 import { Config } from "../../Config";
 import { InvalidInputDataError } from "../../error/InvalidInputDataError";
-import { MissingPhoneNumberError } from "../../error/MissingPhoneNumberError";
 import { PerPhoneLimitExceededError } from "../../error/PerPhoneLimitExceededError";
 import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
 import { AlmostUniqueShortIdGenerator } from "../../helpers/AlmostUniqueShortIdGenerator";
