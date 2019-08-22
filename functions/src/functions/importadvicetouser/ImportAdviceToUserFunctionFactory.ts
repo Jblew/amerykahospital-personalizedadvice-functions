@@ -7,7 +7,7 @@ import { Config } from "../../Config";
 import { AdviceDoesNotExistError } from "../../error/AdviceDoesNotExistError";
 import { InvalidInputDataError } from "../../error/InvalidInputDataError";
 import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
-import { AuthHelper } from "../../helpers/AuthHelper";
+import { AuthHelper } from "../../helpers/auth/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
 import TYPES from "../../TYPES";

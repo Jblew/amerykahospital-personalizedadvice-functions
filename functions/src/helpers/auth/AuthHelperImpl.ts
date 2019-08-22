@@ -4,9 +4,11 @@ import * as functions from "firebase-functions";
 import { FirestoreRoles } from "firestore-roles";
 import { inject, injectable } from "inversify";
 
-import { TYPES } from "../TYPES";
+import { TYPES } from "../../TYPES";
 
 import { AuthHelper } from "./AuthHelper";
+import { NotAuthenticatedError } from "./error/NotAuthenticatedError";
+import { NotMedicalProfessionalError } from "./error/NotMedicalProfessionalError";
 
 @injectable()
 export class AuthHelperImpl implements AuthHelper {
@@ -15,7 +17,7 @@ export class AuthHelperImpl implements AuthHelper {
 
     public async assertAuthenticated(context: functions.https.CallableContext) {
         if (!this.isAuthenticated(context)) {
-            throw new functions.https.HttpsError("permission-denied", "Please authenticate");
+            throw NotAuthenticatedError.make();
         }
     }
 
@@ -23,10 +25,7 @@ export class AuthHelperImpl implements AuthHelper {
         const isAuthenticatedMP =
             context.auth && context.auth.uid && (await this.isAuthenticatedMedicalProfessional(context.auth.uid));
         if (!isAuthenticatedMP) {
-            throw new functions.https.HttpsError(
-                "permission-denied",
-                "You must be a medical professional to access this function. Please contact system administrator",
-            );
+            throw NotMedicalProfessionalError.make();
         }
     }
 

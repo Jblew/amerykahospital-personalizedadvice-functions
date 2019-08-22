@@ -1,10 +1,10 @@
 /* tslint:disable no-unused-expression no-console */
 import { RoleKey } from "amerykahospital-personalizedadvice-core";
 
-import { constructAuthorizationContext, registerUserAndGrantRole } from "../_test/common_mocks";
-import { IntegrationTestsEnvironment } from "../_test/IntegrationTestsEnvironment";
-import { _, expect } from "../_test/test_environment";
-import TYPES from "../TYPES";
+import { constructAuthorizationContext, registerUserAndGrantRole } from "../../_test/common_mocks";
+import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
+import { _, expect } from "../../_test/test_environment";
+import TYPES from "../../TYPES";
 
 import { AuthHelper } from "./AuthHelper";
 
