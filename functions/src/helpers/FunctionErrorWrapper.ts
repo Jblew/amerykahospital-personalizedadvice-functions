@@ -1,6 +1,6 @@
-// tslint:disable member-ordering
-import * as functions from "firebase-functions";
+// tslint:disable member-ordering max-classes-per-file
 
+import { SystemError } from "../error/SystemError";
 import { Log } from "../Log";
 
 export class FunctionErrorWrapper {
@@ -15,7 +15,7 @@ export class FunctionErrorWrapper {
             else {
                 // tslint:disable no-console
                 FunctionErrorWrapper.log.error(error);
-                throw new functions.https.HttpsError("unknown", "" + error);
+                throw SystemError.make(error);
             }
         }
     }
