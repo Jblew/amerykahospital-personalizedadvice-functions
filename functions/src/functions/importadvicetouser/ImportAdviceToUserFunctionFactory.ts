@@ -6,6 +6,7 @@ import { inject, injectable } from "inversify";
 import { Config } from "../../Config";
 import { AdviceDoesNotExistError } from "../../error/AdviceDoesNotExistError";
 import { InvalidInputDataError } from "../../error/InvalidInputDataError";
+import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
@@ -55,7 +56,13 @@ export class ImportAdviceToUserFunctionFactory {
 
     private async doChecks(context: functions.https.CallableContext) {
         await this.authHelper.assertAuthenticated(context);
-        await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
+        await this.limitPerUser((context.auth as { uid: string }).uid);
+    }
+
+    private async limitPerUser(uid: string) {
+        await this.perUserLimiter.rejectOnQuotaExceededOrRecordUsage(`u_${uid}`, config =>
+            PerUserLimitExceededError.make(config),
+        );
     }
 
     private getAdviceIdFromData(data: { adviceId: string }): string {
