@@ -34,7 +34,7 @@ export class SMSApiAdapterImpl {
         } catch (error) {
             this.log.info("SMSApi error", error);
 
-            throw new SMSApiAdapter.SMSApiError("Could not send sms: " + JSON.stringify(error), error);
+            throw SMSApiAdapter.SMSApiError.make("Could not send sms: " + JSON.stringify(error));
         }
         return this.processResult(result);
     }
@@ -53,7 +53,7 @@ export class SMSApiAdapterImpl {
 
     private processResult(result: smsapi.BatchSendResult): string {
         if ("error" in result) {
-            throw new SMSApiAdapter.SMSApiError("Could not send sms: " + result.message);
+            throw SMSApiAdapter.SMSApiError.make("Could not send sms: " + result.message);
         } else return `Sent ${result.count} messages`;
     }
 
