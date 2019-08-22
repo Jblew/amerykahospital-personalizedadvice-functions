@@ -5,6 +5,10 @@ import { inject, injectable } from "inversify";
 
 import { AdviceSMSSender } from "../../advicesms/AdviceSMSSender";
 import { Config } from "../../Config";
+import { AdviceDoesNotExistError } from "../../error/AdviceDoesNotExistError";
+import { InvalidInputDataError } from "../../error/InvalidInputDataError";
+import { PerPhoneLimitExceededError } from "../../error/PerPhoneLimitExceededError";
+import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 import { Log } from "../../Log";
@@ -55,11 +59,17 @@ export class SendSMSFunctionFactory {
     private async doChecks(context: functions.https.CallableContext) {
         await this.authHelper.assertAuthenticated(context);
         await this.authHelper.assertUserIsMedicalProfessional(context);
-        await this.perUserLimiter.rejectOnQuotaExceeded("u_" + (context.auth as { uid: string }).uid);
+        await this.limitPerUser((context.auth as { uid: string }).uid);
+    }
+
+    private async limitPerUser(uid: string) {
+        await this.perUserLimiter.rejectOnQuotaExceededOrRecordUsage(`u_${uid}`, config =>
+            PerUserLimitExceededError.make(config),
+        );
     }
 
     private getAdviceIdFromData(data: { adviceId: string }): string {
-        if (!data.adviceId) throw new Error("SendSMSFunction: malformed input data");
+        if (!data.adviceId) throw InvalidInputDataError.make("Missing adviceId");
         return data.adviceId;
     }
 
@@ -68,7 +78,7 @@ export class SendSMSFunctionFactory {
         if (advice) {
             return advice;
         } else {
-            throw new Error("Advice " + adviceId + " does not exist");
+            throw AdviceDoesNotExistError.make(`Advice id "${adviceId}"`);
         }
     }
 
@@ -77,7 +87,9 @@ export class SendSMSFunctionFactory {
         return await this.adviceSMSSender.sendAdviceLinkSMS(advice);
     }
 
-    private async limitSMSApiCalls(phoneNumber: string) {
-        await this.perPhoneNumberLimiter.rejectOnQuotaExceeded("p_" + phoneNumber);
+    private async limitSMSApiCalls(phone: string) {
+        await this.perUserLimiter.rejectOnQuotaExceededOrRecordUsage(`p_${phone}`, config =>
+            PerPhoneLimitExceededError.make(config),
+        );
     }
 }
