@@ -10,3 +10,6 @@ lib/
 
 /firestore-debug.log
 /database-debug.log
+
+/coverage
+/.nyc_output
