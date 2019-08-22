@@ -88,7 +88,7 @@ export class SendSMSFunctionFactory {
     }
 
     private async limitSMSApiCalls(phone: string) {
-        await this.perUserLimiter.rejectOnQuotaExceededOrRecordUsage(`p_${phone}`, config =>
+        await this.perPhoneNumberLimiter.rejectOnQuotaExceededOrRecordUsage(`p_${phone}`, config =>
             PerPhoneLimitExceededError.make(config),
         );
     }
