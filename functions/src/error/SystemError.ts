@@ -12,7 +12,7 @@ export namespace SystemError {
 
     export function make(error: Error): SystemError {
         return LocalizedFirebaseFunctionsError.make({
-            code: "unknown",
+            code: "internal",
             type: "system-error",
             advanced: error.message,
             localizedMessage,
