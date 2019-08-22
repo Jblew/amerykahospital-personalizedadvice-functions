@@ -4,10 +4,14 @@ import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
 
 import { Config } from "../../Config";
+import { AdviceDoesNotExistError } from "../../error/AdviceDoesNotExistError";
+import { InvalidInputDataError } from "../../error/InvalidInputDataError";
 import { AuthHelper } from "../../helpers/AuthHelper";
 import { FunctionErrorWrapper } from "../../helpers/FunctionErrorWrapper";
 import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
 import TYPES from "../../TYPES";
+
+import { AdviceAlreadyImportedError } from "./error/AdviceAlreadyImportedError";
 
 @injectable()
 export class ImportAdviceToUserFunctionFactory {
@@ -55,7 +59,7 @@ export class ImportAdviceToUserFunctionFactory {
     }
 
     private getAdviceIdFromData(data: { adviceId: string }): string {
-        if (!data.adviceId) throw new Error("ImportAdviceToUserFunction: malformed input data");
+        if (!data.adviceId) throw InvalidInputDataError.make("Missing adviceId");
         return data.adviceId;
     }
 
@@ -64,12 +68,12 @@ export class ImportAdviceToUserFunctionFactory {
         if (advice) {
             return advice;
         } else {
-            throw new Error("Advice " + adviceId + " does not exist");
+            throw AdviceDoesNotExistError.make(`Advice id "${adviceId}"`);
         }
     }
 
     private async assertAdviceNotImportedYet(advice: Advice) {
-        if (advice.uid) throw new Error("Advice has been already imported");
+        if (advice.uid) throw AdviceAlreadyImportedError.make();
     }
 
     private async updateAdvice(advice: Advice) {
