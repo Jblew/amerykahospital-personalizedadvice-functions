@@ -1,22 +1,21 @@
-import * as functions from "firebase-functions";
-import { LocalizedError, LocalizedErrorFactory } from "localized-error";
+import { LocalizedFirebaseFunctionsError } from "./LocalizedFirebaseFunctionsError";
 
-export interface SystemError extends LocalizedError {
-    details: {
-        advanced: string;
-        localizedMessage: {},
-    };
-}
+export type SystemError = LocalizedFirebaseFunctionsError<typeof SystemError.type>;
 
 export namespace SystemError {
+    export const type = "system-error";
+
     const localizedMessage = {
         EN: "Unexpected system error occured. Please contact the system administrator",
         PL: "Wystąpił błąd systemu. Proszę skontaktować się z administratorem",
     };
 
     export function make(error: Error): SystemError {
-        const advanced = error.message;
-        const unknownFirebaseError = new functions.https.HttpsError("unknown", localizedMessage.EN, { advanced });
-        return LocalizedErrorFactory.make(unknownFirebaseError, localizedMessage) as SystemError;
+        return LocalizedFirebaseFunctionsError.make({
+            code: "unknown",
+            type: "system-error",
+            advanced: error.message,
+            localizedMessage,
+        });
     }
 }
