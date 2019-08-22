@@ -8,7 +8,7 @@ export namespace NotMedicalProfessionalError {
     export const type = "not-medical-professional-error";
 
     const localizedMessage = {
-        EN: "You must be have a medical professional role to access this function",
+        EN: "You must be a medical professional",
         PL: "Musisz posiadać uprawnienia profesjonalisty medycznego",
     };
 

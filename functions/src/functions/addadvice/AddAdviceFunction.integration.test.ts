@@ -66,7 +66,7 @@ describe("AddAdviceFunction", function() {
                     roles: env.getContainer().get(TYPES.FirestoreRoles),
                 });
                 const advice = _.omit(getSamplePendingAdvice(), fieldName) as PendingAdvice;
-                await expect(functionHandler(advice, context)).to.eventually.be.rejectedWith(/Error/);
+                await expect(functionHandler(advice, context)).to.eventually.be.rejectedWith(/Invalid input data/);
             }),
         );
 
@@ -79,7 +79,7 @@ describe("AddAdviceFunction", function() {
             const advice = getSamplePendingAdvice();
             (advice as any).id = "some-uid";
             await expect(functionHandler(advice, context)).to.eventually.be.rejectedWith(
-                /Error: You cannot specify id/,
+                /You cannot specify advice ID manually/,
             );
         });
     });

@@ -10,6 +10,7 @@ import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
 
 import { Config } from "../../Config";
+import { InvalidInputDataError } from "../../error/InvalidInputDataError";
 import { MissingPhoneNumberError } from "../../error/MissingPhoneNumberError";
 import { PerPhoneLimitExceededError } from "../../error/PerPhoneLimitExceededError";
 import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
@@ -54,7 +55,7 @@ export class AddAdviceFunctionFactory {
             await this.doChecks(data, context);
             const adviceId = await this.doAddAdvice(data, context);
             return {
-                log: "Advice added",
+                log: "",
                 adviceId,
             };
         });
@@ -65,7 +66,7 @@ export class AddAdviceFunctionFactory {
         await this.authHelper.assertUserIsMedicalProfessional(context);
         await this.limitPerUser((context.auth as { uid: string }).uid);
 
-        if (!data.parentPhoneNumber) throw MissingPhoneNumberError.make();
+        if (!data.parentPhoneNumber) throw InvalidInputDataError.make("Missing phone number");
         await this.limitPerPhone(data.parentPhoneNumber);
     }
 
@@ -76,7 +77,7 @@ export class AddAdviceFunctionFactory {
     }
 
     private async limitPerPhone(phone: string) {
-        await this.perUserLimiter.rejectOnQuotaExceededOrRecordUsage(`p_${phone}`, config =>
+        await this.perPhoneNumberLimiter.rejectOnQuotaExceededOrRecordUsage(`p_${phone}`, config =>
             PerPhoneLimitExceededError.make(config),
         );
     }
@@ -91,7 +92,11 @@ export class AddAdviceFunctionFactory {
 
     private dataToPendingAdvice(data: any): PendingAdvice {
         if (data.id) throw CannotSpecifyIdOnPendingAdviceError.make();
-        PendingAdvice.validate(data);
+        try {
+            PendingAdvice.validate(data);
+        } catch (error) {
+            throw InvalidInputDataError.make(error.message);
+        }
         return data as PendingAdvice;
     }
 

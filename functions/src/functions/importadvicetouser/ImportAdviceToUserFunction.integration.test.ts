@@ -63,7 +63,7 @@ describe("ImportAdviceToUserFunction", function() {
             await functionHandler({ adviceId: sampleAdvice.id }, context);
 
             await expect(functionHandler({ adviceId: sampleAdvice.id }, context)).to.eventually.be.rejectedWith(
-                /Advice has been already imported/,
+                /This advice has been already imported/,
             );
         });
     });

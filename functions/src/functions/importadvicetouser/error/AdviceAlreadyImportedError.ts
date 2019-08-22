@@ -6,8 +6,8 @@ export namespace AdviceAlreadyImportedError {
     export const type = "advice-already-imported-error";
 
     const localizedMessage = {
-        EN: "This advice was already imported",
-        PL: "Zaimportowano już tą poradę",
+        EN: "This advice has been already imported",
+        PL: "Zaimportowano już tę poradę",
     };
 
     export function make(): AdviceAlreadyImportedError {
