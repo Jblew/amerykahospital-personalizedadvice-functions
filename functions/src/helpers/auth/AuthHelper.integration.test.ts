@@ -1,5 +1,5 @@
 /* tslint:disable no-unused-expression no-console */
-import { RoleKey } from "amerykahospital-personalizedadvice-core";
+import { RoleKey } from "amerykahospital-personalizedadvice-businesslogic";
 
 import { constructAuthorizationContext, registerUserAndGrantRole } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
@@ -29,21 +29,21 @@ describe("AuthHelper", function() {
         });
     });
 
-    describe("assertUserIsMedicalProfessional", () => {
+    describe(`assertUserHasRole(${RoleKey.medicalprofessional})`, () => {
         it("throws if user is not authenticated", async () => {
             const authHelper: AuthHelper = env.getContainer().get(TYPES.AuthHelper);
             const context = await constructAuthorizationContext({ authorized: false });
-            await expect(authHelper.assertUserIsMedicalProfessional(context)).to.eventually.be.rejectedWith(
-                /You must be a medical professional/,
-            );
+            await expect(
+                authHelper.assertUserHasRole(RoleKey.medicalprofessional, context),
+            ).to.eventually.be.rejectedWith(/You are missing the following role/);
         });
 
         it("throws if user is authenticated but not a medical professional", async () => {
             const authHelper: AuthHelper = env.getContainer().get(TYPES.AuthHelper);
             const context = await constructAuthorizationContext({ authorized: true });
-            await expect(authHelper.assertUserIsMedicalProfessional(context)).to.eventually.be.rejectedWith(
-                /You must be a medical professional/,
-            );
+            await expect(
+                authHelper.assertUserHasRole(RoleKey.medicalprofessional, context),
+            ).to.eventually.be.rejectedWith(/You are missing the following role/);
         });
 
         it("does not throw if user is authenticated and a medical professional", async () => {
@@ -54,7 +54,7 @@ describe("AuthHelper", function() {
                 role: RoleKey.medicalprofessional,
                 roles: env.getContainer().get(TYPES.FirestoreRoles),
             });
-            await expect(authHelper.assertUserIsMedicalProfessional(context)).to.eventually.be.fulfilled;
+            await expect(authHelper.assertUserHasRole(RoleKey.medicalprofessional, context)).to.eventually.be.fulfilled;
         });
     });
 });

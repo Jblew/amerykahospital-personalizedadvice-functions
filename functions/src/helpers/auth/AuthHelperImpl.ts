@@ -1,14 +1,13 @@
 // tslint:disable member-ordering
-import { RoleKey } from "amerykahospital-personalizedadvice-core";
 import * as functions from "firebase-functions";
 import { FirestoreRoles } from "firestore-roles";
 import { inject, injectable } from "inversify";
 
+import { MissingPermissionError } from "../../error/MissingPermissionError";
+import { NotAuthenticatedError } from "../../error/NotAuthenticatedError";
 import { TYPES } from "../../TYPES";
 
 import { AuthHelper } from "./AuthHelper";
-import { NotAuthenticatedError } from "./error/NotAuthenticatedError";
-import { NotMedicalProfessionalError } from "./error/NotMedicalProfessionalError";
 
 @injectable()
 export class AuthHelperImpl implements AuthHelper {
@@ -21,11 +20,10 @@ export class AuthHelperImpl implements AuthHelper {
         }
     }
 
-    public async assertUserIsMedicalProfessional(context: functions.https.CallableContext) {
-        const isAuthenticatedMP =
-            context.auth && context.auth.uid && (await this.isAuthenticatedMedicalProfessional(context.auth.uid));
+    public async assertUserHasRole(roleKey: string, context: functions.https.CallableContext) {
+        const isAuthenticatedMP = context.auth && context.auth.uid && (await this.hasRole(roleKey, context.auth.uid));
         if (!isAuthenticatedMP) {
-            throw NotMedicalProfessionalError.make();
+            throw MissingPermissionError.make(roleKey);
         }
     }
 
@@ -35,7 +33,7 @@ export class AuthHelperImpl implements AuthHelper {
         return !!context.auth && !!context.auth.uid;
     }
 
-    private async isAuthenticatedMedicalProfessional(uid: string): Promise<boolean> {
-        return await this.roles.hasRole(uid, RoleKey.medicalprofessional);
+    private async hasRole(role: string, uid: string): Promise<boolean> {
+        return await this.roles.hasRole(uid, role);
     }
 }
