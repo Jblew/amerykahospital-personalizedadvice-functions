@@ -3,8 +3,7 @@ import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
 import { PerUserLimitExceededError } from "../../error/PerUserLimitExceededError";
-
-import { AuthHelper } from "./AuthHelper";
+import { AuthHelper } from "../../helpers/auth/AuthHelper";
 
 type UpstreamHandler<INPUT_TYPE, RESULT_TYPE> = Handler<
     (data: INPUT_TYPE, context: functions.https.CallableContext) => Promise<RESULT_TYPE>

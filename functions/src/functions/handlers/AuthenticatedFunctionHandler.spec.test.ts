@@ -5,9 +5,9 @@ import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
 import { _, expect, sinon } from "../../_test/test_environment";
+import { AuthHelperImpl } from "../../helpers/auth/AuthHelperImpl";
 
 import { AuthenticatedFunctionHandler } from "./AuthenticatedFunctionHandler";
-import { AuthHelperImpl } from "./AuthHelperImpl";
 
 describe("AuthenticatedFunctionHandler", function() {
     describe("handle", () => {
@@ -63,10 +63,14 @@ describe("AuthenticatedFunctionHandler", function() {
 
         it("Calls rateLimiter.rejectOnQuotaExceededOrRecordUsage with proper uid", async () => {
             const { handler, rateLimiter } = mock({});
+            const uid = "someuid";
             rateLimiter.rejectOnQuotaExceededOrRecordUsage = sinon.spy();
-            await handler.handle("", { auth: { uid: "someuid" } } as any);
+            await handler.handle("", { auth: { uid } } as any);
 
             expect((rateLimiter.rejectOnQuotaExceededOrRecordUsage as sinon.SinonSpy).callCount).to.be.equal(1);
+            expect((rateLimiter.rejectOnQuotaExceededOrRecordUsage as sinon.SinonSpy).firstCall.args[0]).to.be.equal(
+                uid,
+            );
         });
     });
 });
