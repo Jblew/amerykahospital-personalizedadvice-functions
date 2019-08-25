@@ -40,7 +40,7 @@ export class AuthenticatedFunctionHandler<INPUT_TYPE, RESULT_TYPE> implements Up
     }
 
     private async limitPerUser(uid: string) {
-        await this.rateLimiter.rejectOnQuotaExceededOrRecordUsage(`u_${uid}`, config =>
+        await this.rateLimiter.rejectOnQuotaExceededOrRecordUsage(uid, config =>
             PerUserLimitExceededError.make(config),
         );
     }
