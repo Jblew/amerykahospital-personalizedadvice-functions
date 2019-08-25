@@ -11,20 +11,17 @@ before_install:
 
 install:
     - npm i -g firebase firebase-tools
-    - npm install --prefix=./firestore
     - npm install --prefix=./functions
     - firebase setup:emulators:firestore
     - firebase setup:emulators:database
 
 script:
-    - npm run --prefix=./firestore gen-rules
-    - npm run --prefix=./firestore test
     - npm run --prefix=./functions test
     - npm run --prefix=./functions verify
 
 deploy:
     - provider: script
-      script: bash -c "npx firebase deploy --only firestore,functions"
+      script: bash -c "npx firebase deploy --only functions"
       skip_cleanup: true
       on:
           tags: false
