@@ -1,4 +1,4 @@
-import { LocalizedFirebaseFunctionsError } from "../../../error/LocalizedFirebaseFunctionsError";
+import { LocalizedFirebaseFunctionsError } from "./LocalizedFirebaseFunctionsError";
 
 export type AdviceAlreadyImportedError = LocalizedFirebaseFunctionsError<typeof AdviceAlreadyImportedError.type>;
 
