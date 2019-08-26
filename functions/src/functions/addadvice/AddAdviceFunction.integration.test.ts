@@ -1,32 +1,32 @@
 /* tslint:disable no-unused-expression no-console */
 import {
+    AddAdviceFunction,
     Advice,
     AdviceRepository,
-    FirebaseFunctionDefinitions,
     PendingAdvice,
     RoleKey,
-} from "amerykahospital-personalizedadvice-core";
+} from "amerykahospital-personalizedadvice-businesslogic";
 
 import { constructAuthorizationContext, getSamplePendingAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
 import { _, expect } from "../../_test/test_environment";
 import TYPES from "../../TYPES";
 
-import { AddAdviceFunctionFactory } from "./AddAdviceFunctionFactory";
+import { AddAdviceFunctionHandlerFactory } from "./AddAdviceFunctionHandlerFactory";
 
 describe("AddAdviceFunction", function() {
     this.timeout(4000);
 
     const env = new IntegrationTestsEnvironment();
-    let functionHandler: FirebaseFunctionDefinitions.AddAdvice.Function;
+    let functionHandler: AddAdviceFunction.Function;
     let adviceRepository: AdviceRepository;
 
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
         functionHandler = env
             .getContainer()
-            .get<AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory)
-            .getFunctionHandler();
+            .get<AddAdviceFunctionHandlerFactory>(TYPES.AddAdviceFunctionFactory)
+            .makeHandler().handle;
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
     });

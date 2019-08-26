@@ -4,7 +4,7 @@ export const TYPES = {
     RealtimeDatabase: Symbol("RealtimeDatabase"),
     AuthHelper: Symbol("AuthHelper"),
     RateLimiterFactory: Symbol("RateLimiterFactory"),
-    AddAdviceFunctionFactory: Symbol("AddAdviceFunctionFactory"),
+    AddAdviceFunctionHandlerFactory: Symbol("AddAdviceFunctionHandlerFactory"),
     ImportAdviceToUserFunctionFactory: Symbol("ImportAdviceToUserFunctionFactory"),
     SendSMSFunctionFactory: Symbol("SendSMSFunctionFactory"),
     FirestoreRoles: Symbol("FirestoreRoles"),
@@ -19,6 +19,6 @@ export default TYPES;
 
 export { AuthHelper } from "./helpers/auth/AuthHelper";
 export { RateLimiterFactory } from "./providers/RateLimiterFactory";
-export { AddAdviceFunctionFactory } from "./functions/addadvice/AddAdviceFunctionFactory";
+export { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
 export { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
 export { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";

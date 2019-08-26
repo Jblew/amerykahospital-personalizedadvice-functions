@@ -1,4 +1,4 @@
-import { AdviceRepository, SentSMSRepository } from "amerykahospital-personalizedadvice-core";
+import { AdviceRepository, SentSMSRepository } from "amerykahospital-personalizedadvice-businesslogic";
 import * as admin from "firebase-admin";
 import { FirestoreRoles } from "firestore-roles";
 import { Container } from "inversify";
@@ -8,7 +8,7 @@ import { DynamicLinksAdapter } from "./adapters/DynamicLinksAdapter";
 import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
 import { AdviceSMSSender } from "./advicesms/AdviceSMSSender";
 import { AdviceSMSSenderImpl } from "./advicesms/AdviceSMSSenderImpl";
-import { AddAdviceFunctionFactory } from "./functions/addadvice/AddAdviceFunctionFactory";
+import { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
 import { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
 import { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
 import { AuthHelper } from "./helpers/auth/AuthHelper";
@@ -62,11 +62,18 @@ function containerFactory() {
         .bind<SentSMSRepository>(TYPES.SentSMSRepository)
         .toDynamicValue(sentSMSRepositoryFactory)
         .inSingletonScope();
-    container.bind<AddAdviceFunctionFactory>(TYPES.AddAdviceFunctionFactory).to(AddAdviceFunctionFactory);
+    container
+        .bind<AddAdviceFunctionHandlerFactory>(TYPES.AddAdviceFunctionHandlerFactory)
+        .to(AddAdviceFunctionHandlerFactory)
+        .inSingletonScope();
     container
         .bind<ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
-        .to(ImportAdviceToUserFunctionFactory);
-    container.bind<SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory).to(SendSMSFunctionFactory);
+        .to(ImportAdviceToUserFunctionFactory)
+        .inSingletonScope();
+    container
+        .bind<SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory)
+        .to(SendSMSFunctionFactory)
+        .inSingletonScope();
 
     return container;
 }
