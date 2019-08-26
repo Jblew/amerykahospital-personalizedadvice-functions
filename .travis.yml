@@ -20,7 +20,6 @@ before_install:
         functions/src/settings/scripts/select-preprod.sh
         echo "Using preprod environment"
       fi
-    - cat functions/src/settings/index.ts
 
 install:
     - npm install --prefix=./functions
