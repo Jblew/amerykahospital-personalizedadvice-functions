@@ -38,4 +38,4 @@ deploy:
       on:
           tags: false
           all_branches: true
-          condition: branch IN (production, preprod)
+          condition: $TRAVIS_BRANCH =~ ^(preprod|production)$
