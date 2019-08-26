@@ -8,9 +8,21 @@ branches:
 
 before_install:
     - npm i -g npm
+    - npm i -g firebase firebase-tools
+    - git clone http://$GH_TOKEN@github.com/jblew/amerykahospital-personalizedadvice-settings functions/src/settings
+    - |
+      if [[ $TRAVIS_BRANCH == "production" ]]; then
+        firebase use production
+        functions/src/settings/scripts/select-production.sh
+        echo "Using production environment"
+      else
+        firebase use preprod
+        functions/src/settings/scripts/select-preprod.sh
+        echo "Using preprod environment"
+      fi
+    - cat functions/src/settings/index.ts
 
 install:
-    - npm i -g firebase firebase-tools
     - npm install --prefix=./functions
     - firebase setup:emulators:firestore
     - firebase setup:emulators:database
@@ -25,4 +37,5 @@ deploy:
       skip_cleanup: true
       on:
           tags: false
-          branch: master
+          all_branches: true
+          condition: branch IN (production, preprod)

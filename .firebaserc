@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "amerykahospital-advice-68385"
+    "production": "amerykahospital-advice-68385",
+    "preprod": "amerykahospital-advice-preprod"
   }
 }
