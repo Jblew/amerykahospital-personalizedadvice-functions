@@ -1,7 +1,7 @@
 import { LocalizedFirebaseFunctionsError } from "../error/LocalizedFirebaseFunctionsError";
 
 export interface SMSApiAdapter {
-    sendMessage(phoneNumber: string, message: string): Promise<string>;
+    sendMessage(props: { phoneNumber: string; message: string; fromName: string }): Promise<string>;
 }
 
 export namespace SMSApiAdapter {

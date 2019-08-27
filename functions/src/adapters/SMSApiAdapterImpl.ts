@@ -9,27 +9,24 @@ import { Log } from "../Log";
 import { SMSApiAdapter } from "./SMSApiAdapter";
 
 @injectable()
-export class SMSApiAdapterImpl {
+export class SMSApiAdapterImpl implements SMSApiAdapter {
     private log = Log.tag("SMSApiAdapterImpl");
     private smsApi: smsapi;
     private test: boolean;
-    private from: string;
 
-    public constructor(props: { test?: boolean; from: string }) {
+    public constructor(props: { test?: boolean }) {
         this.test = props.test || false;
-        this.from = props.from;
         ow(this.test, "SMSApiAdapterImpl.props.test", ow.boolean);
-        ow(this.from, "SMSApiAdapterImpl.props.from", ow.string);
 
         this.smsApi = this.constructApi();
     }
 
-    public async sendMessage(phoneNumber: string, message: string): Promise<string> {
-        this.log.info("Begin SMSApi send", { phoneNumber, message });
+    public async sendMessage(props: { phoneNumber: string; message: string; fromName: string }): Promise<string> {
+        this.log.info("Begin SMSApi send", props);
 
         let result: smsapi.BatchSendResult;
         try {
-            result = await this.buildQuery(phoneNumber, message).execute();
+            result = await this.buildQuery(props).execute();
             this.log.info("SMSApi response", result);
         } catch (error) {
             this.log.info("SMSApi error", error);
@@ -39,13 +36,13 @@ export class SMSApiAdapterImpl {
         return this.processResult(result);
     }
 
-    private buildQuery(phoneNumber: string, message: string): smsapi.MessageBuilder {
+    private buildQuery(props: { phoneNumber: string; message: string; fromName: string }): smsapi.MessageBuilder {
         const builder = this.smsApi.message
             .sms()
             .normalize()
-            .from(this.from)
-            .to(phoneNumber)
-            .message(message);
+            .from(props.fromName)
+            .to(props.phoneNumber)
+            .message(props.message);
 
         if (this.test) return builder.test();
         else return builder;
