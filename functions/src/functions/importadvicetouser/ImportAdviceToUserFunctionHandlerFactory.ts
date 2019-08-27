@@ -5,7 +5,6 @@ import {
     Handler,
     ImportAdviceToUserFunction,
 } from "amerykahospital-personalizedadvice-businesslogic";
-import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
 
@@ -25,6 +24,8 @@ interface ImportAdviceToUserFunctionHandlerPropsType {
 
 @injectable()
 export class ImportAdviceToUserFunctionHandlerFactory {
+    private functionConfig = Config.importAdviceToUser;
+
     @inject(TYPES.AuthHelper)
     private authHelper!: AuthHelper;
 
@@ -34,7 +35,7 @@ export class ImportAdviceToUserFunctionHandlerFactory {
     private perUserLimiter: FirebaseFunctionsRateLimiter;
 
     public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
-        this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.importAdviceToUser.limits.perUser);
+        this.perUserLimiter = rateLimiterFactory.createRateLimiter(this.functionConfig.limits.perUser);
     }
 
     public makeHandler(): Handler<ImportAdviceToUserFunction.Function> &

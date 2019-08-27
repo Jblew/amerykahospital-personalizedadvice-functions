@@ -2,7 +2,6 @@ import {
     AddAdviceFunction,
     AdviceRepository,
     Handler,
-    RoleKey,
 } from "amerykahospital-personalizedadvice-businesslogic";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import FirestoreRoles from "firestore-roles";
@@ -24,6 +23,8 @@ interface AddAdviceFunctionHandlerPropTypes {
 
 @injectable()
 export class AddAdviceFunctionHandlerFactory {
+    private functionConfig = Config.addAdvice;
+
     @inject(TYPES.AuthHelper)
     private authHelper!: AuthHelper;
 
@@ -37,8 +38,8 @@ export class AddAdviceFunctionHandlerFactory {
     private perUserLimiter: FirebaseFunctionsRateLimiter;
 
     public constructor(@inject(TYPES.RateLimiterFactory) rateLimiterFactory: RateLimiterFactory) {
-        this.perPhoneNumberLimiter = rateLimiterFactory.createRateLimiter(Config.addAdvice.limits.perPhone);
-        this.perUserLimiter = rateLimiterFactory.createRateLimiter(Config.addAdvice.limits.perUser);
+        this.perPhoneNumberLimiter = rateLimiterFactory.createRateLimiter(this.functionConfig.limits.perPhone);
+        this.perUserLimiter = rateLimiterFactory.createRateLimiter(this.functionConfig.limits.perUser);
     }
 
     public makeHandler(): Handler<AddAdviceFunction.Function> &
