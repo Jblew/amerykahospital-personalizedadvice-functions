@@ -1,25 +1,23 @@
-import { FIREBASE_CONFIG } from "amerykahospital-personalizedadvice-core";
 import Axios from "axios";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 
 import { Log } from "../Log";
+import { FirebaseConfig } from "../settings";
+import TYPES from "../TYPES";
 import { AxiosErrorTransformer } from "../util/AxiosErrorTransformer";
 
 @injectable()
 export class DynamicLinksAdapter {
-    private log = Log.tag("DynamicLinksAdapter");
+    @inject(TYPES.FirebaseConfig)
+    private firebaseConfig!: FirebaseConfig;
 
-    public buildLongDynamicLink(inAppLink: string): string {
-        const url =
-            FIREBASE_CONFIG.dynamicLinksBaseUrl + `?link=${inAppLink}` + `&apn=${FIREBASE_CONFIG.androidPackageName}`;
-        return url;
-    }
+    private log = Log.tag("DynamicLinksAdapter");
 
     public async obtainShortUnguessableDynamicLinkFromFirebase(longDynamicLink: string): Promise<string> {
         const resp = await AxiosErrorTransformer.wrap(
             async () =>
                 await Axios({
-                    url: "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + FIREBASE_CONFIG.apiKey,
+                    url: "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + this.firebaseConfig.apiKey,
                     method: "POST",
                     headers: {
                         "Content-type": "application/json",
