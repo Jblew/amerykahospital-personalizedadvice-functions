@@ -1,4 +1,4 @@
-import { AdviceRepository, SentSMSRepository } from "amerykahospital-personalizedadvice-businesslogic";
+import { AdviceRepository, SentSMSRepository, SMSConfig } from "amerykahospital-personalizedadvice-businesslogic";
 import * as admin from "firebase-admin";
 import { FirestoreRoles } from "firestore-roles";
 import { Container } from "inversify";
@@ -9,7 +9,10 @@ import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
 import { AdviceSMSSender } from "./advicesms/AdviceSMSSender";
 import { AdviceSMSSenderImpl } from "./advicesms/AdviceSMSSenderImpl";
 import { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
-import { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
+import { SystemHandler } from "./functions/handlers/SystemHandler";
+import {
+    ImportAdviceToUserFunctionHandlerFactory, //
+} from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
 import { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
 import { AuthHelper } from "./helpers/auth/AuthHelper";
 import { AuthHelperImpl } from "./helpers/auth/AuthHelperImpl";
@@ -20,6 +23,7 @@ import { RateLimiterFactory } from "./providers/RateLimiterFactory";
 import { RateLimiterFactoryImpl } from "./providers/RateLimiterFactoryImpl";
 import sentSMSRepositoryFactory from "./providers/SentSMSRepositoryFactory";
 import smsApiAdapterFactory from "./providers/SMSApiAdapterFactory";
+import { DeepLinkBuilder, deepLinkBuilder, FIREBASE_CONFIG, FirebaseConfig, SMS_CONFIG } from "./settings";
 import TYPES from "./TYPES";
 
 function containerFactory() {
@@ -67,13 +71,16 @@ function containerFactory() {
         .to(AddAdviceFunctionHandlerFactory)
         .inSingletonScope();
     container
-        .bind<ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
-        .to(ImportAdviceToUserFunctionFactory)
+        .bind<ImportAdviceToUserFunctionHandlerFactory>(TYPES.ImportAdviceToUserFunctionHandlerFactory)
+        .to(ImportAdviceToUserFunctionHandlerFactory)
         .inSingletonScope();
     container
         .bind<SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory)
         .to(SendSMSFunctionFactory)
         .inSingletonScope();
+    container.bind<DeepLinkBuilder>(TYPES.DeepLinkBuilder).toConstantValue(deepLinkBuilder);
+    container.bind<SMSConfig>(TYPES.SMSConfig).toConstantValue(SMS_CONFIG);
+    container.bind<FirebaseConfig>(TYPES.FirebaseConfig).toConstantValue(FIREBASE_CONFIG);
 
     return container;
 }

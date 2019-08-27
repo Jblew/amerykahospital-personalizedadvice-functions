@@ -5,7 +5,7 @@ export const TYPES = {
     AuthHelper: Symbol("AuthHelper"),
     RateLimiterFactory: Symbol("RateLimiterFactory"),
     AddAdviceFunctionHandlerFactory: Symbol("AddAdviceFunctionHandlerFactory"),
-    ImportAdviceToUserFunctionFactory: Symbol("ImportAdviceToUserFunctionFactory"),
+    ImportAdviceToUserFunctionHandlerFactory: Symbol("ImportAdviceToUserFunctionHandlerFactory"),
     SendSMSFunctionFactory: Symbol("SendSMSFunctionFactory"),
     FirestoreRoles: Symbol("FirestoreRoles"),
     DynamicLinksAdapter: Symbol("DynamicLinksAdapter"),
@@ -13,6 +13,9 @@ export const TYPES = {
     AdviceRepository: Symbol("AdviceRepository"),
     SentSMSRepository: Symbol("SentSMSRepository"),
     AdviceSMSSender: Symbol("AdviceSMSSender"),
+    FirebaseConfig: Symbol("FirebaseConfig"),
+    SMSConfig: Symbol("SMSConfig"),
+    DeepLinkBuilder: Symbol("DeepLinkBuilder"),
 };
 
 export default TYPES;
@@ -20,5 +23,7 @@ export default TYPES;
 export { AuthHelper } from "./helpers/auth/AuthHelper";
 export { RateLimiterFactory } from "./providers/RateLimiterFactory";
 export { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
-export { ImportAdviceToUserFunctionFactory } from "./functions/importadvicetouser/ImportAdviceToUserFunctionFactory";
+export {
+    ImportAdviceToUserFunctionHandlerFactory,
+} from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
 export { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
