@@ -21,10 +21,16 @@ export class ErrorWrappingHandler<INPUT_TYPE, RESULT_TYPE> implements UpstreamHa
             const res: T = await fn();
             return res;
         } catch (error) {
-            if ("code" in error) throw error;
-            else {
-                // tslint:disable no-console
-                this.log.error(error);
+            if (typeof error === "undefined") {
+                const undefinedErrorError = new Error("ErrorWrappingHandler got undefined error");
+                this.log.error(undefinedErrorError);
+                throw SystemError.make(undefinedErrorError);
+            }
+
+            this.log.error(error);
+            if ("code" in error) {
+                throw error;
+            } else {
                 throw SystemError.make(error);
             }
         }
