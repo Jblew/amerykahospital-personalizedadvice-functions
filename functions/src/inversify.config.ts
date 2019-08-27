@@ -7,11 +7,10 @@ import "reflect-metadata";
 import { DynamicLinksAdapter } from "./adapters/DynamicLinksAdapter";
 import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
 import { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
-import { SystemHandler } from "./functions/handlers/SystemHandler";
 import {
     ImportAdviceToUserFunctionHandlerFactory, //
 } from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
-import { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
+import { SendSMSFunctionHandlerFactory } from "./functions/sendsms/SendSMSFunctionHandlerFactory";
 import { AuthHelper } from "./helpers/auth/AuthHelper";
 import { AuthHelperImpl } from "./helpers/auth/AuthHelperImpl";
 import adviceRepositoryFactory from "./providers/AdviceRepositoryFactory";
@@ -69,8 +68,8 @@ function containerFactory() {
         .to(ImportAdviceToUserFunctionHandlerFactory)
         .inSingletonScope();
     container
-        .bind<SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory)
-        .to(SendSMSFunctionFactory)
+        .bind<SendSMSFunctionHandlerFactory>(TYPES.SendSMSFunctionHandlerFactory)
+        .to(SendSMSFunctionHandlerFactory)
         .inSingletonScope();
     container.bind<DeepLinkBuilder>(TYPES.DeepLinkBuilder).toConstantValue(deepLinkBuilder);
     container.bind<SMSConfig>(TYPES.SMSConfig).toConstantValue(SMS_CONFIG);
