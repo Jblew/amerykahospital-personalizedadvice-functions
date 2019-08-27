@@ -9,28 +9,21 @@ import { UpstreamHandler } from "./UpstreamHandler";
 export class AuthenticatedFunctionHandler<INPUT_TYPE, RESULT_TYPE> implements UpstreamHandler<INPUT_TYPE, RESULT_TYPE> {
     private authHelper: AuthHelper;
     private upstreamHandler: UpstreamHandler<INPUT_TYPE, RESULT_TYPE>;
-    private requiredRole: string | undefined;
     private rateLimiter: FirebaseFunctionsRateLimiter;
 
     public constructor(p: {
         authHelper: AuthHelper;
         upstreamHandler: UpstreamHandler<INPUT_TYPE, RESULT_TYPE>;
-        requiredRole?: string;
         rateLimiter: FirebaseFunctionsRateLimiter;
     }) {
         this.authHelper = p.authHelper;
         this.upstreamHandler = p.upstreamHandler;
-        this.requiredRole = p.requiredRole;
         this.rateLimiter = p.rateLimiter;
     }
 
     public async handle(data: INPUT_TYPE, context: functions.https.CallableContext): Promise<RESULT_TYPE> {
         await this.authHelper.assertAuthenticated(context);
         await this.limitPerUser((context.auth as { uid: string }).uid);
-
-        if (this.requiredRole) {
-            await this.authHelper.assertUserHasRole(this.requiredRole, context);
-        }
 
         return await this.upstreamHandler.handle(data, context);
     }
