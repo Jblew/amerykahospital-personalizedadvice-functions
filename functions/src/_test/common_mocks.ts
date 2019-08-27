@@ -1,4 +1,4 @@
-import { Advice, PendingAdvice } from "amerykahospital-personalizedadvice-core";
+import { Advice, PendingAdvice } from "amerykahospital-personalizedadvice-businesslogic";
 import * as functions from "firebase-functions";
 import FirestoreRoles, { AccountRecord } from "firestore-roles";
 import * as uuid from "uuid/v4";
