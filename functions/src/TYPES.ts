@@ -18,11 +18,3 @@ export const TYPES = {
 };
 
 export default TYPES;
-
-export { AuthHelper } from "./helpers/auth/AuthHelper";
-export { RateLimiterFactory } from "./providers/RateLimiterFactory";
-export { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
-export {
-    ImportAdviceToUserFunctionHandlerFactory,
-} from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
-export { SendSMSFunctionFactory } from "./functions/sendsms/SendSMSFunctionFactory";
