@@ -1,6 +1,5 @@
 import * as functions from "firebase-functions";
 
-import { SystemError } from "../../error/SystemError";
 import { Log } from "../../Log";
 
 import { ErrorWrappingHandler } from "./system/ErrorWrappingHandler";
@@ -60,20 +59,6 @@ export class SystemHandler<INPUT_TYPE, RESULT_TYPE> implements SystemHandler<INP
 
     private logMeta(runStats?: SystemHandler.RunStats): { [x: string]: any } {
         return { function: this.props.functionName, ...this.props, handlerStats: this.handlerStats, runStats };
-    }
-
-    private async wrap<T>(fn: () => Promise<T>): Promise<T> {
-        try {
-            const res: T = await fn();
-            return res;
-        } catch (error) {
-            if ("code" in error) throw error;
-            else {
-                // tslint:disable no-console
-                this.log.error(error);
-                throw SystemError.make(error);
-            }
-        }
     }
 }
 

@@ -1,6 +1,5 @@
 /* tslint:disable no-unused-expression no-console */
 
-import { RoleKey } from "amerykahospital-personalizedadvice-businesslogic";
 import * as functions from "firebase-functions";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 
