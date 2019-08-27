@@ -4,6 +4,7 @@ import {
     SentSMSRepository,
     SMSConfig,
 } from "amerykahospital-personalizedadvice-businesslogic";
+import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import FirestoreRoles from "firestore-roles";
 
 import { DynamicLinksAdapter } from "../../adapters/DynamicLinksAdapter";
@@ -12,6 +13,7 @@ import { AdviceAlreadyImportedError } from "../../error/AdviceAlreadyImportedErr
 import { AdviceDoesNotExistError } from "../../error/AdviceDoesNotExistError";
 import { InvalidInputDataError } from "../../error/InvalidInputDataError";
 import { MissingPermissionError } from "../../error/MissingPermissionError";
+import { PerPhoneLimitExceededError } from "../../error/PerPhoneLimitExceededError";
 
 export class SendSMSFunctionHandler extends SendSMSFunctionAbstractHandler {
     private smsConfig: SMSConfig;
@@ -21,6 +23,7 @@ export class SendSMSFunctionHandler extends SendSMSFunctionAbstractHandler {
     private smsApiAdapter: SMSApiAdapter;
     private dynamicLinksAdapter: DynamicLinksAdapter;
     private deepLinkBuilder: (inAppLink: string) => string;
+    private perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
 
     public constructor(p: {
         adviceRepository: AdviceRepository;
@@ -30,6 +33,7 @@ export class SendSMSFunctionHandler extends SendSMSFunctionAbstractHandler {
         dynamicLinksAdapter: DynamicLinksAdapter;
         smsApiAdapter: SMSApiAdapter;
         deepLinkBuilder: (inAppLink: string) => string;
+        perPhoneNumberLimiter: FirebaseFunctionsRateLimiter;
     }) {
         super();
         this.adviceRepository = p.adviceRepository;
@@ -39,6 +43,7 @@ export class SendSMSFunctionHandler extends SendSMSFunctionAbstractHandler {
         this.smsApiAdapter = p.smsApiAdapter;
         this.dynamicLinksAdapter = p.dynamicLinksAdapter;
         this.deepLinkBuilder = p.deepLinkBuilder;
+        this.perPhoneNumberLimiter = p.perPhoneNumberLimiter;
     }
 
     protected getAdviceRepository(): AdviceRepository {
@@ -69,7 +74,9 @@ export class SendSMSFunctionHandler extends SendSMSFunctionAbstractHandler {
         return this.sentSMSRepository;
     }
 
-    protected sendSMS(props: { phoneNumber: string; message: string; fromName: string }): Promise<any> {
+    protected async sendSMS(props: { phoneNumber: string; message: string; fromName: string }): Promise<any> {
+        await this.limitPerPhone(props.phoneNumber);
+
         return this.smsApiAdapter.sendMessage(props);
     }
 
@@ -80,5 +87,11 @@ export class SendSMSFunctionHandler extends SendSMSFunctionAbstractHandler {
 
     protected getSMSConfig() {
         return this.smsConfig;
+    }
+
+    private async limitPerPhone(phone: string) {
+        await this.perPhoneNumberLimiter.rejectOnQuotaExceededOrRecordUsage(`p_${phone}`, config =>
+            PerPhoneLimitExceededError.make(config),
+        );
     }
 }
