@@ -1,3 +1,4 @@
+// tslint:ignore
 import { Handler } from "amerykahospital-personalizedadvice-businesslogic";
 import * as functions from "firebase-functions";
 
