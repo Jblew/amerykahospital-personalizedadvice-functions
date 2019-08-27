@@ -6,8 +6,6 @@ import "reflect-metadata";
 
 import { DynamicLinksAdapter } from "./adapters/DynamicLinksAdapter";
 import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
-import { AdviceSMSSender } from "./advicesms/AdviceSMSSender";
-import { AdviceSMSSenderImpl } from "./advicesms/AdviceSMSSenderImpl";
 import { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
 import { SystemHandler } from "./functions/handlers/SystemHandler";
 import {
@@ -47,10 +45,6 @@ function containerFactory() {
     container
         .bind<SMSApiAdapter>(TYPES.SMSApiAdapter)
         .toDynamicValue(smsApiAdapterFactory)
-        .inSingletonScope();
-    container
-        .bind<AdviceSMSSender>(TYPES.AdviceSMSSender)
-        .to(AdviceSMSSenderImpl)
         .inSingletonScope();
     container
         .bind<DynamicLinksAdapter>(TYPES.DynamicLinksAdapter)
