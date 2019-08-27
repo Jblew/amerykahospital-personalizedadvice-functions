@@ -5,6 +5,7 @@ import { Container } from "inversify";
 import "reflect-metadata";
 
 import { DynamicLinksAdapter } from "./adapters/DynamicLinksAdapter";
+import { DynamicLinksAdapterImpl } from "./adapters/DynamicLinksAdapterImpl";
 import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
 import { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
 import {
@@ -47,7 +48,7 @@ function containerFactory() {
         .inSingletonScope();
     container
         .bind<DynamicLinksAdapter>(TYPES.DynamicLinksAdapter)
-        .to(DynamicLinksAdapter)
+        .to(DynamicLinksAdapterImpl)
         .inSingletonScope();
     container.bind<AuthHelper>(TYPES.AuthHelper).to(AuthHelperImpl);
     container.bind<RateLimiterFactory>(TYPES.RateLimiterFactory).to(RateLimiterFactoryImpl);
