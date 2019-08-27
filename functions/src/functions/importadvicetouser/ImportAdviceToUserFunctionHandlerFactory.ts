@@ -14,37 +14,13 @@ import { AuthHelper } from "../../helpers/auth/AuthHelper";
 import { RateLimiterFactory } from "../../providers/RateLimiterFactory";
 import TYPES from "../../TYPES";
 import { AuthenticatedFunctionHandler } from "../handlers/AuthenticatedFunctionHandler";
+import { ContextInjectingHandler } from "../handlers/ContextInjectingHandler";
 import { SystemHandler } from "../handlers/SystemHandler";
-import { UpstreamHandler } from "../handlers/UpstreamHandler";
 
 import { ImportAdviceToUserFunctionHandler } from "./ImportAdviceToUserFunctionHandler";
 
-type ContextAngosticUpstreamHandler<INPUT_TYPE, PROPS_TYPE, RESULT_TYPE> = Handler<
-    (data: INPUT_TYPE, props: PROPS_TYPE) => Promise<RESULT_TYPE>
->;
 interface ImportAdviceToUserFunctionHandlerPropsType {
     uid: string;
-}
-class ContextInjectingHandler<INPUT_TYPE, RESULT_TYPE> implements UpstreamHandler<INPUT_TYPE, RESULT_TYPE> {
-    private upstreamHandler: ContextAngosticUpstreamHandler<
-        INPUT_TYPE,
-        ImportAdviceToUserFunctionHandlerPropsType,
-        RESULT_TYPE
-    >;
-
-    public constructor(
-        upstreamHandler: ContextAngosticUpstreamHandler<
-            INPUT_TYPE,
-            ImportAdviceToUserFunctionHandlerPropsType,
-            RESULT_TYPE
-        >,
-    ) {
-        this.upstreamHandler = upstreamHandler;
-    }
-
-    public async handle(data: INPUT_TYPE, context: functions.https.CallableContext): Promise<RESULT_TYPE> {
-        return this.upstreamHandler.handle(data, { uid: context.auth!.uid });
-    }
 }
 
 @injectable()
@@ -66,7 +42,11 @@ export class ImportAdviceToUserFunctionHandlerFactory {
         const rawHandler = new ImportAdviceToUserFunctionHandler({
             adviceRepository: this.adviceRepository,
         });
-        const handlerWithContext = new ContextInjectingHandler(rawHandler);
+        const handlerWithContext = new ContextInjectingHandler<
+            ImportAdviceToUserFunction.Input,
+            ImportAdviceToUserFunctionHandlerPropsType,
+            ImportAdviceToUserFunction.Result
+        >(context => ({ uid: context.auth!.uid }), rawHandler);
 
         const authenticatedHandler = new AuthenticatedFunctionHandler({
             upstreamHandler: handlerWithContext,
