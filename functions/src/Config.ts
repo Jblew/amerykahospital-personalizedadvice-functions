@@ -1,7 +1,4 @@
 export const Config = {
-    sms: {
-        fromName: "Ameryka app",
-    },
     addAdvice: {
         limits: {
             perUser: {
