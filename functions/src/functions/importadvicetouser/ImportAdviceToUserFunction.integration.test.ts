@@ -4,6 +4,8 @@ import { Advice, AdviceRepository, ImportAdviceToUserFunction } from "amerykahos
 import { constructAuthorizationContext, getSampleAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
 import { _, expect } from "../../_test/test_environment";
+import { AdviceAlreadyImportedError } from "../../error/AdviceAlreadyImportedError";
+import { NotAuthenticatedError } from "../../error/NotAuthenticatedError";
 import TYPES from "../../TYPES";
 
 import { ImportAdviceToUserFunctionHandlerFactory } from "./ImportAdviceToUserFunctionHandlerFactory";
@@ -17,10 +19,11 @@ describe("ImportAdviceToUserFunction", function() {
     let sampleAdvice: Advice;
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
-        functionHandler = env
+        const handlerObj = env
             .getContainer()
             .get<ImportAdviceToUserFunctionHandlerFactory>(TYPES.ImportAdviceToUserFunctionHandlerFactory)
-            .makeHandler().handle;
+            .makeHandler();
+        functionHandler = handlerObj.handle.bind(handlerObj);
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
     });
@@ -34,8 +37,10 @@ describe("ImportAdviceToUserFunction", function() {
         it("throws if user is not authenticated", async () => {
             const context = await constructAuthorizationContext({ authorized: false });
 
-            await expect(functionHandler({ adviceId: sampleAdvice.id }, context)).to.eventually.be.rejectedWith(
-                /Please authenticate/,
+            await expect(
+                functionHandler({ adviceId: sampleAdvice.id }, context),
+            ).to.eventually.be.rejected.with.satisfy(
+                (e: NotAuthenticatedError) => e.details.type === NotAuthenticatedError.type,
             );
         });
     });
@@ -62,8 +67,10 @@ describe("ImportAdviceToUserFunction", function() {
 
             await functionHandler({ adviceId: sampleAdvice.id }, context);
 
-            await expect(functionHandler({ adviceId: sampleAdvice.id }, context)).to.eventually.be.rejectedWith(
-                /This advice has been already imported/,
+            await expect(
+                functionHandler({ adviceId: sampleAdvice.id }, context),
+            ).to.eventually.be.rejected.with.satisfy(
+                (e: AdviceAlreadyImportedError) => e.details.type === AdviceAlreadyImportedError.type,
             );
         });
     });

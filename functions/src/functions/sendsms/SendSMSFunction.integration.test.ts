@@ -22,10 +22,11 @@ describe("SendSMSFunction", function() {
         env.getContainer()
             .rebind(TYPES.SMSApiAdapter)
             .toConstantValue(smsApiAdapterMock);
-        functionHandler = env
+        const handlerObj = env
             .getContainer()
             .get<SendSMSFunctionHandlerFactory>(TYPES.SendSMSFunctionHandlerFactory)
-            .makeHandler().handle;
+            .makeHandler();
+        functionHandler = handlerObj.handle.bind(handlerObj);
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
         smsApiAdapterMock.sendMessage = sinon.fake.resolves("Result");

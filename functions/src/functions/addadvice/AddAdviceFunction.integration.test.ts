@@ -23,10 +23,11 @@ describe("AddAdviceFunction", function() {
 
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
-        functionHandler = env
+        const handlerObj = env
             .getContainer()
             .get<AddAdviceFunctionHandlerFactory>(TYPES.AddAdviceFunctionHandlerFactory)
-            .makeHandler().handle;
+            .makeHandler();
+        functionHandler = handlerObj.handle.bind(handlerObj);
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
     });
