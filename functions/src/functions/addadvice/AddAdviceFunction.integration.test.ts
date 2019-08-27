@@ -25,7 +25,7 @@ describe("AddAdviceFunction", function() {
     beforeEach(() => {
         functionHandler = env
             .getContainer()
-            .get<AddAdviceFunctionHandlerFactory>(TYPES.AddAdviceFunctionFactory)
+            .get<AddAdviceFunctionHandlerFactory>(TYPES.AddAdviceFunctionHandlerFactory)
             .makeHandler().handle;
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);

@@ -1,26 +1,26 @@
 /* tslint:disable no-unused-expression no-console */
-import { Advice, AdviceRepository, FirebaseFunctionDefinitions } from "amerykahospital-personalizedadvice-core";
+import { Advice, AdviceRepository, ImportAdviceToUserFunction } from "amerykahospital-personalizedadvice-businesslogic";
 
 import { constructAuthorizationContext, getSampleAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
 import { _, expect } from "../../_test/test_environment";
 import TYPES from "../../TYPES";
 
-import { ImportAdviceToUserFunctionFactory } from "./ImportAdviceToUserFunctionFactory";
+import { ImportAdviceToUserFunctionHandlerFactory } from "./ImportAdviceToUserFunctionHandlerFactory";
 
 describe("ImportAdviceToUserFunction", function() {
     this.timeout(4000);
 
     const env = new IntegrationTestsEnvironment();
-    let functionHandler: FirebaseFunctionDefinitions.ImportAdviceToUser.Function;
+    let functionHandler: ImportAdviceToUserFunction.Function;
     let adviceRepository: AdviceRepository;
     let sampleAdvice: Advice;
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
         functionHandler = env
             .getContainer()
-            .get<ImportAdviceToUserFunctionFactory>(TYPES.ImportAdviceToUserFunctionFactory)
-            .getFunctionHandler();
+            .get<ImportAdviceToUserFunctionHandlerFactory>(TYPES.ImportAdviceToUserFunctionHandlerFactory)
+            .makeHandler().handle;
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
     });

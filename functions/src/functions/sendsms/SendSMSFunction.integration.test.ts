@@ -1,39 +1,34 @@
 /* tslint:disable no-unused-expression no-console */
-import {
-    Advice,
-    AdviceRepository,
-    FirebaseFunctionDefinitions,
-    RoleKey,
-} from "amerykahospital-personalizedadvice-core";
+import { Advice, AdviceRepository, RoleKey, SendSMSFunction } from "amerykahospital-personalizedadvice-businesslogic";
 
 import { constructAuthorizationContext, getSampleAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
 import { _, expect, sinon } from "../../_test/test_environment";
-import { AdviceSMSSenderMock } from "../../advicesms/AdviceSMSSenderMock.test";
+import { SMSApiAdapterMock } from "../../adapters/SMSApiAdapterMock.test";
 import TYPES from "../../TYPES";
 
-import { SendSMSFunctionFactory } from "./SendSMSFunctionFactory";
+import { SendSMSFunctionHandlerFactory } from "./SendSMSFunctionHandlerFactory";
 
 describe("SendSMSFunction", function() {
     this.timeout(4000);
 
     const env = new IntegrationTestsEnvironment();
-    let functionHandler: FirebaseFunctionDefinitions.SendSMS.Function;
-    const adviceSMSSenderMock: AdviceSMSSenderMock = new AdviceSMSSenderMock();
+    const smsApiAdapterMock = new SMSApiAdapterMock();
+    let functionHandler: SendSMSFunction.Function;
     let adviceRepository: AdviceRepository;
     let sampleAdvice: Advice;
     beforeEach(async () => await env.prepareEach());
     beforeEach(() => {
         env.getContainer()
-            .rebind(TYPES.AdviceSMSSender)
-            .toConstantValue(adviceSMSSenderMock);
+            .rebind(TYPES.SMSApiAdapter)
+            .toConstantValue(smsApiAdapterMock);
         functionHandler = env
             .getContainer()
-            .get<SendSMSFunctionFactory>(TYPES.SendSMSFunctionFactory)
-            .getFunctionHandler();
+            .get<SendSMSFunctionHandlerFactory>(TYPES.SendSMSFunctionHandlerFactory)
+            .makeHandler().handle;
 
         adviceRepository = env.getContainer().get<AdviceRepository>(TYPES.AdviceRepository);
-        adviceSMSSenderMock.sendAdviceLinkSMS = sinon.fake.resolves({ message: "message", sentSMSId: "sentSMSId" });
+        smsApiAdapterMock.sendMessage = sinon.fake.resolves("Result");
     });
     beforeEach(async () => {
         sampleAdvice = getSampleAdvice();
@@ -72,12 +67,12 @@ describe("SendSMSFunction", function() {
     });
 
     describe("SMS sending", () => {
-        it("Calls adviceSMSSender.sendAdviceLinkSMS with proper advice", async () => {
+        it("Calls smsApiAdapterMock.sendMessage with proper advice", async () => {
             const context = await authenticatedAsMedicalProfessional();
 
             await functionHandler({ adviceId: sampleAdvice.id }, context);
 
-            const sendAdviceLinkSMSSpy = adviceSMSSenderMock.sendAdviceLinkSMS as sinon.SinonSpy;
+            const sendAdviceLinkSMSSpy = smsApiAdapterMock.sendMessage as sinon.SinonSpy;
             expect(sendAdviceLinkSMSSpy.callCount).to.be.equal(1);
 
             const advicePassedToSender = sendAdviceLinkSMSSpy.args[0][0] as Advice;
