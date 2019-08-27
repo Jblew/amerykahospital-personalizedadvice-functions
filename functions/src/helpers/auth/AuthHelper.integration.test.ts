@@ -4,6 +4,7 @@ import { RoleKey } from "amerykahospital-personalizedadvice-businesslogic";
 import { constructAuthorizationContext, registerUserAndGrantRole } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
 import { _, expect } from "../../_test/test_environment";
+import { MissingPermissionError } from "../../error/MissingPermissionError";
 import TYPES from "../../TYPES";
 
 import { AuthHelper } from "./AuthHelper";
@@ -35,7 +36,9 @@ describe("AuthHelper", function() {
             const context = await constructAuthorizationContext({ authorized: false });
             await expect(
                 authHelper.assertUserHasRole(RoleKey.medicalprofessional, context),
-            ).to.eventually.be.rejectedWith(/You are missing the following role/);
+            ).to.eventually.be.rejected.with.satisfy(
+                (e: MissingPermissionError) => e.details.type === MissingPermissionError.type,
+            );
         });
 
         it("throws if user is authenticated but not a medical professional", async () => {
@@ -43,7 +46,9 @@ describe("AuthHelper", function() {
             const context = await constructAuthorizationContext({ authorized: true });
             await expect(
                 authHelper.assertUserHasRole(RoleKey.medicalprofessional, context),
-            ).to.eventually.be.rejectedWith(/You are missing the following role/);
+            ).to.eventually.be.rejected.with.satisfy(
+                (e: MissingPermissionError) => e.details.type === MissingPermissionError.type,
+            );
         });
 
         it("does not throw if user is authenticated and a medical professional", async () => {

@@ -10,6 +10,9 @@ import {
 import { constructAuthorizationContext, getSamplePendingAdvice } from "../../_test/common_mocks";
 import { IntegrationTestsEnvironment } from "../../_test/IntegrationTestsEnvironment";
 import { _, expect } from "../../_test/test_environment";
+import { InvalidInputDataError } from "../../error/InvalidInputDataError";
+import { MissingPermissionError } from "../../error/MissingPermissionError";
+import { NotAuthenticatedError } from "../../error/NotAuthenticatedError";
 import TYPES from "../../TYPES";
 
 import { AddAdviceFunctionHandlerFactory } from "./AddAdviceFunctionHandlerFactory";
@@ -36,15 +39,15 @@ describe("AddAdviceFunction", function() {
     describe("authorization checking", () => {
         it("throws if user is not authenticated", async () => {
             const context = await constructAuthorizationContext({ authorized: false });
-            await expect(functionHandler(getSamplePendingAdvice(), context)).to.eventually.be.rejectedWith(
-                /Please authenticate/,
+            await expect(functionHandler(getSamplePendingAdvice(), context)).to.eventually.be.rejected.with.satisfy(
+                (e: NotAuthenticatedError) => e.details.type === NotAuthenticatedError.type,
             );
         });
 
         it("throws if user is authenticated but not a medical professional", async () => {
             const context = await constructAuthorizationContext({ authorized: true });
-            await expect(functionHandler(getSamplePendingAdvice(), context)).to.eventually.be.rejectedWith(
-                /You must be a medical professional/,
+            await expect(functionHandler(getSamplePendingAdvice(), context)).to.eventually.be.rejected.with.satisfy(
+                (e: MissingPermissionError) => e.details.type === MissingPermissionError.type,
             );
         });
 
@@ -67,7 +70,9 @@ describe("AddAdviceFunction", function() {
                     roles: env.getContainer().get(TYPES.FirestoreRoles),
                 });
                 const advice = _.omit(getSamplePendingAdvice(), fieldName) as PendingAdvice;
-                await expect(functionHandler(advice, context)).to.eventually.be.rejectedWith(/Invalid input data/);
+                await expect(functionHandler(advice, context)).to.eventually.be.rejected.with.satisfy(
+                    (e: InvalidInputDataError) => e.details.type === InvalidInputDataError.type,
+                );
             }),
         );
 
@@ -79,8 +84,8 @@ describe("AddAdviceFunction", function() {
             });
             const advice = getSamplePendingAdvice();
             (advice as any).id = "some-uid";
-            await expect(functionHandler(advice, context)).to.eventually.be.rejectedWith(
-                /You cannot specify advice ID manually/,
+            await expect(functionHandler(advice, context)).to.eventually.be.rejected.with.satisfy(
+                (e: InvalidInputDataError) => e.details.type === InvalidInputDataError.type,
             );
         });
     });
