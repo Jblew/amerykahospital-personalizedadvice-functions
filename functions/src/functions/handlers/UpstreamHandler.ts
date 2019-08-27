@@ -1,7 +1,7 @@
-// tslint:ignore
+// tslint:disable
 import { Handler } from "amerykahospital-personalizedadvice-businesslogic";
-import * as functions from "firebase-functions";
+import { https } from "firebase-functions";
 
 export type UpstreamHandler<INPUT_TYPE, RESULT_TYPE> = Handler<
-    (data: INPUT_TYPE, context: functions.https.CallableContext) => Promise<RESULT_TYPE>
+    (data: INPUT_TYPE, context: https.CallableContext) => Promise<RESULT_TYPE>
 >;
