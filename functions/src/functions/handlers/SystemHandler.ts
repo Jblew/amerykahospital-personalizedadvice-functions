@@ -23,7 +23,7 @@ export class SystemHandler<INPUT_TYPE, RESULT_TYPE> implements SystemHandler<INP
         runStats = this.recordStart(runStats);
 
         try {
-            return this.upstreamHandler.handle(data, context);
+            return await this.upstreamHandler.handle(data, context);
         } finally {
             runStats = this.recordFinish(runStats);
         }
