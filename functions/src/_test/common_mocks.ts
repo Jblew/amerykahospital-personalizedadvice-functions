@@ -47,6 +47,7 @@ export function getSamplePendingAdvice() {
         medicalprofessionalName: "medicalprofessional-" + uuid(),
         parentPhoneNumber: "123123123",
         advice: "advice-" + uuid(),
+        evidenceHash: "randomevidencehash",
     };
     return advice;
 }
@@ -59,6 +60,7 @@ export function getSampleAdvice() {
         parentPhoneNumber: (Math.floor(Math.random() * 10 ** 9) + "").padStart(9, "0"),
         advice: "advice-" + uuid(),
         timestamp: Math.floor(Date.now() / 1000),
+        evidenceHash: "randomevidencehash",
     };
     return advice;
 }
