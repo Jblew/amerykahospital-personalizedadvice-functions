@@ -1,7 +1,8 @@
 // tslint:disable no-console
-import { FIREBASE_CONFIG } from "@/settings";
 import firestore from "@google-cloud/firestore";
 import functions from "firebase-functions";
+
+import { FIREBASE_CONFIG } from "../../settings";
 
 const backupConfig = FIREBASE_CONFIG.backup.firestore;
 const bucket = `gs://${backupConfig.bucketName}`;
@@ -9,6 +10,7 @@ const schedule = backupConfig.schedule;
 
 const client = new firestore.v1.FirestoreAdminClient();
 
+// source: https://firebase.google.com/docs/firestore/solutions/schedule-export
 export const backupFirestoreFunction = functions.pubsub.schedule(schedule).onRun(() => {
     const databaseName = client.databasePath(process.env.GCP_PROJECT, "(default)");
 
