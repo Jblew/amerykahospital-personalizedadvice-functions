@@ -7,6 +7,7 @@ import {
 import * as functions from "firebase-functions";
 import "reflect-metadata";
 
+import { backupFirestoreFunction } from "./functions/maintenance/BackupFirestoreFunction";
 import { RunnableFunctionFactory } from "./functions/RunnableFunctionFactory";
 import { resolveAddAdvice, resolveImportAdviceToUser, resolveSendSMS } from "./index_resolver";
 import containerFactory from "./inversify.config";
@@ -21,3 +22,5 @@ exports[ImportAdviceToUserFunction.NAME] = RunnableFunctionFactory.make(
     functions,
     resolveImportAdviceToUser(container),
 );
+
+exports["backupfirestore"] = backupFirestoreFunction;

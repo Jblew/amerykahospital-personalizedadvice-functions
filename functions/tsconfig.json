@@ -25,6 +25,7 @@
     "src/**/*"
   ],
   "exclude": [
+    "src/settings",
     "src/**/*.test.ts",
     "**/_test/**/*"
   ],
