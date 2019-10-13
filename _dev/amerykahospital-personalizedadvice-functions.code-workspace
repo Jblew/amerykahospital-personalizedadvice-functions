@@ -13,5 +13,7 @@
 		"prettier.trailingComma": "all",
 		"prettier.printWidth": 120,
 		"prettier.tabWidth": 4,
+		"editor.formatOnSave": true,
+		"tslint.autoFixOnSave": true
 	}
 }
