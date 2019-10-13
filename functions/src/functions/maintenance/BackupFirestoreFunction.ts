@@ -30,11 +30,17 @@ export const backupFirestoreFunction = functions.pubsub.schedule(schedule).onRun
         console.log("Database export finished");
         console.log(`Operation Name: ${response.name}`);
 
-        await Axios.get(cronHealthcheckService("success"));
+        await notifyCronHealthcheck(true);
         return response;
     } catch (err) {
         console.error(err);
-        await Axios.get(cronHealthcheckService("failure"));
+        await notifyCronHealthcheck(false);
         throw new Error("Export operation failed");
     }
 });
+
+async function notifyCronHealthcheck(success?: boolean) {
+    const url = cronHealthcheckService(success ? "success" : "failure");
+    console.log("Notifying cron healthcheck at " + url);
+    await Axios({ url });
+}
