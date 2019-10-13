@@ -1,6 +1,6 @@
 // tslint:disable no-console
 import firestore from "@google-cloud/firestore";
-import functions from "firebase-functions";
+import * as functions from "firebase-functions";
 
 import { FIREBASE_CONFIG } from "../../settings";
 
