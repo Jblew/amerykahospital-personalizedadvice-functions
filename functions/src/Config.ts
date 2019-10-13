@@ -1,8 +1,4 @@
 export const Config = {
-    backupFirestore: {
-        bucketName: "firestore_backup",
-        schedule: "every 15 minutes",
-    },
     addAdvice: {
         limits: {
             perUser: {

@@ -1,11 +1,11 @@
 // tslint:disable no-console
+import { FIREBASE_CONFIG } from "@/settings";
 import firestore from "@google-cloud/firestore";
 import functions from "firebase-functions";
 
-import { Config } from "../../Config";
-
-const bucket = `gs://${Config.backupFirestore.bucketName}`;
-const schedule = Config.backupFirestore.schedule;
+const backupConfig = FIREBASE_CONFIG.backup.firestore;
+const bucket = `gs://${backupConfig.bucketName}`;
+const schedule = backupConfig.schedule;
 
 const client = new firestore.v1.FirestoreAdminClient();
 
