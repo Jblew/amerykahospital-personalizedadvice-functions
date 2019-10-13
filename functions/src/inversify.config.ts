@@ -8,6 +8,7 @@ import { DynamicLinksAdapter } from "./adapters/DynamicLinksAdapter";
 import { DynamicLinksAdapterImpl } from "./adapters/DynamicLinksAdapterImpl";
 import { SMSApiAdapter } from "./adapters/SMSApiAdapter";
 import { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
+import { HeartbeatFunctionHandlerFactory } from "./functions/heartbeat/HeartbeatFunctionHandlerFactory";
 import {
     ImportAdviceToUserFunctionHandlerFactory, //
 } from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
@@ -67,6 +68,10 @@ function containerFactory() {
     container
         .bind<ImportAdviceToUserFunctionHandlerFactory>(TYPES.ImportAdviceToUserFunctionHandlerFactory)
         .to(ImportAdviceToUserFunctionHandlerFactory)
+        .inSingletonScope();
+    container
+        .bind<HeartbeatFunctionHandlerFactory>(TYPES.HeartbeatFunctionHandlerFactory)
+        .to(HeartbeatFunctionHandlerFactory)
         .inSingletonScope();
     container
         .bind<SendSMSFunctionHandlerFactory>(TYPES.SendSMSFunctionHandlerFactory)

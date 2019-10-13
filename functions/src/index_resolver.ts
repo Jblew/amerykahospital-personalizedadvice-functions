@@ -2,6 +2,7 @@ import { Container } from "inversify";
 
 import { AddAdviceFunctionHandlerFactory } from "./functions/addadvice/AddAdviceFunctionHandlerFactory";
 import { SystemHandler } from "./functions/handlers/SystemHandler";
+import { HeartbeatFunctionHandlerFactory } from "./functions/heartbeat/HeartbeatFunctionHandlerFactory";
 import {
     ImportAdviceToUserFunctionHandlerFactory, //
 } from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
@@ -20,4 +21,8 @@ export function resolveImportAdviceToUser(container: Container): SystemHandler<a
     return container
         .get<ImportAdviceToUserFunctionHandlerFactory>(TYPES.ImportAdviceToUserFunctionHandlerFactory)
         .makeHandler();
+}
+
+export function resolveHeartbeat(container: Container): SystemHandler<any, any> {
+    return container.get<HeartbeatFunctionHandlerFactory>(TYPES.HeartbeatFunctionHandlerFactory).makeHandler();
 }

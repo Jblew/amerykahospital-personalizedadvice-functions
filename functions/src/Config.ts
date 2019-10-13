@@ -36,4 +36,13 @@ export const Config = {
             },
         },
     },
+    heartbeat: {
+        limits: {
+            perUser: {
+                name: "heartbeat_peruser_lim",
+                maxCalls: 6,
+                periodSeconds: 60,
+            },
+        },
+    },
 };

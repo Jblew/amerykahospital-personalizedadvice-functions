@@ -1,7 +1,7 @@
 /* tslint:disable no-unused-expression no-console */
 import { IntegrationTestsEnvironment } from "./_test/IntegrationTestsEnvironment";
 import { expect } from "./_test/test_environment";
-import { resolveAddAdvice, resolveImportAdviceToUser, resolveSendSMS } from "./index_resolver";
+import { resolveAddAdvice, resolveHeartbeat, resolveImportAdviceToUser, resolveSendSMS } from "./index_resolver";
 
 describe("index_resolver", function() {
     this.timeout(4000);
@@ -23,6 +23,11 @@ describe("index_resolver", function() {
 
     it("ImportAdviceToUser is resolved properly", () => {
         const resolvedFunction = resolveImportAdviceToUser(env.getContainer());
+        expect(resolvedFunction).to.not.be.undefined;
+    });
+
+    it("Heartbeat is resolved properly", () => {
+        const resolvedFunction = resolveHeartbeat(env.getContainer());
         expect(resolvedFunction).to.not.be.undefined;
     });
 });
