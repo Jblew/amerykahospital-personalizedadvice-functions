@@ -21,7 +21,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "amerykahospital-personalizedadvice-businesslogic": "^5.6.0",
+    "amerykahospital-personalizedadvice-businesslogic": "^5.8.0",
     "amerykahospital-personalizedadvice-db": "^1.6.0",
     "axios": "^0.19.0",
     "firebase-admin": "^8.3.0",
