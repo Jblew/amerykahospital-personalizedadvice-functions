@@ -8,6 +8,7 @@ export const TYPES = {
     ImportAdviceToUserFunctionHandlerFactory: Symbol("ImportAdviceToUserFunctionHandlerFactory"),
     SendSMSFunctionHandlerFactory: Symbol("SendSMSFunctionHandlerFactory"),
     HeartbeatFunctionHandlerFactory: Symbol("HeartbeatFunctionHandlerFactory"),
+    ThankFunctionHandlerFactory: Symbol("ThankFunctionHandlerFactory"),
     FirestoreRoles: Symbol("FirestoreRoles"),
     DynamicLinksAdapter: Symbol("DynamicLinksAdapter"),
     SMSApiAdapter: Symbol("SMSApiAdapter"),

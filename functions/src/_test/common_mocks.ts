@@ -4,10 +4,12 @@ import FirestoreRoles, { AccountRecord } from "firestore-roles";
 import * as uuid from "uuid/v4";
 
 export async function constructAuthorizationContext(
-    props: { authorized: false } | { authorized: true; role?: string; roles?: FirestoreRoles },
+    props: { authorized: false } | { authorized: true; uid?: string; role?: string; roles?: FirestoreRoles },
 ): Promise<functions.https.CallableContext> {
     if (!props.authorized) return { auth: {} } as functions.https.CallableContext;
-    const account = await registerUserAndGrantRole({ uid: `uid_${uuid()}`, role: props.role, roles: props.roles });
+
+    const uid = props.uid || `uid_${uuid()}`;
+    const account = await registerUserAndGrantRole({ uid, role: props.role, roles: props.roles });
     return {
         auth: {
             uid: account.uid,

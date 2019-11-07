@@ -4,13 +4,20 @@ import {
     HeartbeatFunction,
     ImportAdviceToUserFunction,
     SendSMSFunction,
+    ThankFunction,
 } from "amerykahospital-personalizedadvice-businesslogic";
 import * as functions from "firebase-functions";
 import "reflect-metadata";
 
 import { backupFirestoreFunction } from "./functions/maintenance/BackupFirestoreFunction";
 import { RunnableFunctionFactory } from "./functions/RunnableFunctionFactory";
-import { resolveAddAdvice, resolveHeartbeat, resolveImportAdviceToUser, resolveSendSMS } from "./index_resolver";
+import {
+    resolveAddAdvice,
+    resolveHeartbeat,
+    resolveImportAdviceToUser,
+    resolveSendSMS,
+    resolveThank,
+} from "./index_resolver";
 import containerFactory from "./inversify.config";
 
 const container = containerFactory();
@@ -25,5 +32,6 @@ exports[ImportAdviceToUserFunction.NAME] = RunnableFunctionFactory.make(
 );
 
 exports[HeartbeatFunction.NAME] = RunnableFunctionFactory.make(functions, resolveHeartbeat(container));
+exports[ThankFunction.NAME] = RunnableFunctionFactory.make(functions, resolveThank(container));
 
 exports["backupfirestore"] = backupFirestoreFunction;

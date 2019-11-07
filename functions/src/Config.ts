@@ -45,4 +45,13 @@ export const Config = {
             },
         },
     },
+    thank: {
+        limits: {
+            perUser: {
+                name: "thank_peruser_lim",
+                maxCalls: 30,
+                periodSeconds: 60,
+            },
+        },
+    },
 };

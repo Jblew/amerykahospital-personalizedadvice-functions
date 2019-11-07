@@ -1,8 +1,9 @@
 // tslint:disable max-classes-per-file
 import {
+    AddAdviceFunction,
     AdviceRepository,
     Handler,
-    ImportAdviceToUserFunction,
+    ThankFunction,
 } from "amerykahospital-personalizedadvice-businesslogic";
 import FirebaseFunctionsRateLimiter from "firebase-functions-rate-limiter";
 import { inject, injectable } from "inversify";
@@ -15,15 +16,15 @@ import { AuthenticatedFunctionHandler } from "../handlers/AuthenticatedFunctionH
 import { ContextInjectingHandler } from "../handlers/ContextInjectingHandler";
 import { SystemHandler } from "../handlers/SystemHandler";
 
-import { ImportAdviceToUserFunctionHandler } from "./ImportAdviceToUserFunctionHandler";
+import { ThankFunctionHandler } from "./ThankFunctionHandler";
 
-interface ImportAdviceToUserFunctionHandlerPropsType {
+interface ThankFunctionHandlerPropsType {
     uid: string;
 }
 
 @injectable()
-export class ImportAdviceToUserFunctionHandlerFactory {
-    private functionConfig = Config.importAdviceToUser;
+export class ThankFunctionHandlerFactory {
+    private functionConfig = Config.thank;
 
     @inject(TYPES.AuthHelper)
     private authHelper!: AuthHelper;
@@ -37,15 +38,14 @@ export class ImportAdviceToUserFunctionHandlerFactory {
         this.perUserLimiter = rateLimiterFactory.createRateLimiter(this.functionConfig.limits.perUser);
     }
 
-    public makeHandler(): Handler<ImportAdviceToUserFunction.Function> &
-        SystemHandler<ImportAdviceToUserFunction.Input, ImportAdviceToUserFunction.Result> {
-        const rawHandler = new ImportAdviceToUserFunctionHandler({
+    public makeHandler(): Handler<ThankFunction.Function> & SystemHandler<ThankFunction.Input, ThankFunction.Result> {
+        const rawHandler = new ThankFunctionHandler({
             adviceRepository: this.adviceRepository,
         });
         const handlerWithContext = new ContextInjectingHandler<
-            ImportAdviceToUserFunction.Input,
-            ImportAdviceToUserFunctionHandlerPropsType,
-            ImportAdviceToUserFunction.Result
+            ThankFunction.Input,
+            ThankFunctionHandlerPropsType,
+            ThankFunction.Result
         >(context => ({ uid: context.auth!.uid }), rawHandler);
 
         const authenticatedHandler = new AuthenticatedFunctionHandler({
@@ -54,6 +54,6 @@ export class ImportAdviceToUserFunctionHandlerFactory {
             rateLimiter: this.perUserLimiter,
         });
 
-        return new SystemHandler({ functionName: ImportAdviceToUserFunction.NAME }, authenticatedHandler);
+        return new SystemHandler({ functionName: ThankFunction.NAME }, authenticatedHandler);
     }
 }

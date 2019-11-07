@@ -7,6 +7,7 @@ import {
     ImportAdviceToUserFunctionHandlerFactory, //
 } from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
 import { SendSMSFunctionHandlerFactory } from "./functions/sendsms/SendSMSFunctionHandlerFactory";
+import { ThankFunctionHandlerFactory } from "./functions/thank/ThankFunctionHandlerFactory";
 import TYPES from "./TYPES";
 
 export function resolveAddAdvice(container: Container): SystemHandler<any, any> {
@@ -25,4 +26,8 @@ export function resolveImportAdviceToUser(container: Container): SystemHandler<a
 
 export function resolveHeartbeat(container: Container): SystemHandler<any, any> {
     return container.get<HeartbeatFunctionHandlerFactory>(TYPES.HeartbeatFunctionHandlerFactory).makeHandler();
+}
+
+export function resolveThank(container: Container): SystemHandler<any, any> {
+    return container.get<ThankFunctionHandlerFactory>(TYPES.ThankFunctionHandlerFactory).makeHandler();
 }

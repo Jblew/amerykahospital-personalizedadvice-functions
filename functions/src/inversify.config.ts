@@ -13,6 +13,7 @@ import {
     ImportAdviceToUserFunctionHandlerFactory, //
 } from "./functions/importadvicetouser/ImportAdviceToUserFunctionHandlerFactory";
 import { SendSMSFunctionHandlerFactory } from "./functions/sendsms/SendSMSFunctionHandlerFactory";
+import { ThankFunctionHandlerFactory } from "./functions/thank/ThankFunctionHandlerFactory";
 import { AuthHelper } from "./helpers/auth/AuthHelper";
 import { AuthHelperImpl } from "./helpers/auth/AuthHelperImpl";
 import adviceRepositoryFactory from "./providers/AdviceRepositoryFactory";
@@ -72,6 +73,10 @@ function containerFactory() {
     container
         .bind<HeartbeatFunctionHandlerFactory>(TYPES.HeartbeatFunctionHandlerFactory)
         .to(HeartbeatFunctionHandlerFactory)
+        .inSingletonScope();
+    container
+        .bind<ThankFunctionHandlerFactory>(TYPES.ThankFunctionHandlerFactory)
+        .to(ThankFunctionHandlerFactory)
         .inSingletonScope();
     container
         .bind<SendSMSFunctionHandlerFactory>(TYPES.SendSMSFunctionHandlerFactory)
