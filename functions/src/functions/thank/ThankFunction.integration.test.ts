@@ -58,7 +58,7 @@ describe("ThankFunction", function() {
         it("Increments after next invocations", async () => {
             const context = await constructAuthorizationContext({ authorized: true, uid: sampleAdvice.uid });
 
-            const noOfInvocations = _.random(2, 7);
+            const noOfInvocations = _.random(2, 5);
             for (let i = 0; i < noOfInvocations; i++) {
                 await functionHandler({ adviceId: sampleAdvice.id }, context);
             }
