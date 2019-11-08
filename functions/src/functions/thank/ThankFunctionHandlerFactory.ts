@@ -1,6 +1,5 @@
 // tslint:disable max-classes-per-file
 import {
-    AddAdviceFunction,
     AdviceRepository,
     Handler,
     ThankFunction,
