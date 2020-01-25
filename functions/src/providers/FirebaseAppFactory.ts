@@ -7,6 +7,5 @@ import { FIREBASE_CONFIG } from "../settings";
 console.log("Initialized admin app with credentials", FIREBASE_CONFIG);
 export default (context: inversify.interfaces.Context) =>
     admin.initializeApp({
-        ...FIREBASE_CONFIG,
         credential: admin.credential.applicationDefault(),
     });
