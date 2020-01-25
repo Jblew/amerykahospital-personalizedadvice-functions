@@ -1,7 +1,6 @@
+// tslint:disable:no-console
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
-import * as functions from "firebase-functions";
 
-const client = new SecretManagerServiceClient(functions.config().firebase);
 import { FIREBASE_CONFIG } from "../settings";
 
 const projectName = FIREBASE_CONFIG.projectId;
@@ -10,6 +9,10 @@ const secretPath = `projects/${projectName}/secrets/${secretName}/versions/lates
 
 export async function obtainSMSApiToken(): Promise<string> {
     try {
+        const client = new SecretManagerServiceClient();
+        console.log("auth", client.auth);
+        console.log("projectId", client.getProjectId());
+
         const [secrets] = await client.listSecrets({
             parent: `projects/${projectName}`,
         });
