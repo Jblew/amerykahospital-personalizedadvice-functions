@@ -1,3 +1,6 @@
 import * as admin from "firebase-admin";
 import * as inversify from "inversify";
-export default (context: inversify.interfaces.Context) => admin.initializeApp();
+
+import { FIREBASE_CONFIG } from "../settings";
+
+export default (context: inversify.interfaces.Context) => admin.initializeApp(FIREBASE_CONFIG);
