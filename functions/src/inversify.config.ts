@@ -23,7 +23,7 @@ import { RateLimiterFactory } from "./providers/RateLimiterFactory";
 import { RateLimiterFactoryImpl } from "./providers/RateLimiterFactoryImpl";
 import sentSMSRepositoryFactory from "./providers/SentSMSRepositoryFactory";
 import smsApiAdapterFactory from "./providers/SMSApiAdapterFactory";
-import { DeepLinkBuilder, deepLinkBuilder, FIREBASE_CONFIG, FirebaseConfig, SMS_CONFIG } from "./settings";
+import { DeepLinkBuilder, deepLinkBuilder, FirebaseConfig, FIREBASE_CONFIG, SMS_CONFIG } from "./settings";
 import TYPES from "./TYPES";
 
 function containerFactory() {
