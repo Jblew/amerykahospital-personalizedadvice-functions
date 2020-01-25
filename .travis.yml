@@ -22,7 +22,7 @@ before_install:
       fi
 
 install:
-    - npm install --prefix=./functions
+    - npm ci --prefix=./functions
     - firebase setup:emulators:firestore
     - firebase setup:emulators:database
 
