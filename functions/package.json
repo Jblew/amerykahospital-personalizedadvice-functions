@@ -53,7 +53,7 @@
     "chai-as-promised": "7.1.1",
     "firebase-functions-test": "^0.1.6",
     "jblew-tslint-config": "^0.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mocha": "^6.2.0",
     "sinon": "^7.4.1",
     "ts-node": "8.3.0",
