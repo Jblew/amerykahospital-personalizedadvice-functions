@@ -23,7 +23,7 @@
   "dependencies": {
     "amerykahospital-personalizedadvice-businesslogic": "^5.8.0",
     "amerykahospital-personalizedadvice-db": "^1.6.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "firebase-admin": "^8.3.0",
     "firebase-functions": "^3.2.0",
     "firebase-functions-rate-limiter": "^3.6.1",
